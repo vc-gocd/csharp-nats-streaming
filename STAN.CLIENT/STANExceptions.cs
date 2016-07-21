@@ -1,69 +1,76 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/*******************************************************************************
+ * Copyright (c) 2015-2016 Apcera Inc. All rights reserved. This program and the accompanying
+ * materials are made available under the terms of the MIT License (MIT) which accompanies this
+ * distribution, and is available at http://opensource.org/licenses/MIT
+ *******************************************************************************/
+using System;
 
 namespace STAN.Client
 {
-    public class STANException : Exception
+    public class StanException : Exception
     {
-        internal STANException() : base() { }
-        internal STANException(string err) : base (err) {}
-        internal STANException(string err, Exception innerEx) : base(err, innerEx) { }
+        internal StanException() : base() { }
+        internal StanException(string err) : base (err) {}
+        internal StanException(string err, Exception innerEx) : base(err, innerEx) { }
     }
 
-    public class STANConnectRequestException : STANException
+    public class StanConnectRequestException : StanException
     {
-        internal STANConnectRequestException() : base("Connection request timeout.") { }
-        internal STANConnectRequestException(string msg) : base(msg) { }
-        internal STANConnectRequestException(Exception e) : base("Connection request timeout.", e) { }
+        internal StanConnectRequestException() : base("Connection request timeout.") { }
+        internal StanConnectRequestException(string msg) : base(msg) { }
+        internal StanConnectRequestException(Exception e) : base("Connection request timeout.", e) { }
     }
 
-    public class STANCloseRequestException : STANException
+    public class StanCloseRequestException : StanException
     {
-        internal STANCloseRequestException() : base("Close request timeout.") { }
-        internal STANCloseRequestException(string msg) : base(msg) { }
-        internal STANCloseRequestException(Exception e) : base("Close request timeout.", e) { }
+        internal StanCloseRequestException() : base("Close request timeout.") { }
+        internal StanCloseRequestException(string msg) : base(msg) { }
+        internal StanCloseRequestException(Exception e) : base("Close request timeout.", e) { }
     }
 
-    public class STANConnectionClosedException : STANException
+    public class StanConnectionClosedException : StanException
     {
-        internal STANConnectionClosedException() : base("Connection closed.") { }
-        internal STANConnectionClosedException(Exception e) : base("Connection closed.", e) { }
+        internal StanConnectionClosedException() : base("Connection closed.") { }
+        internal StanConnectionClosedException(Exception e) : base("Connection closed.", e) { }
     }
 
-    public class STANPublishAckTimeoutException : STANException
+    public class StanPublishAckTimeoutException : StanException
     {
-        internal STANPublishAckTimeoutException() : base("Publish acknowledgement timeout.") { }
-        internal STANPublishAckTimeoutException(Exception e) : base("Publish acknowledgement timeout.", e) { }
+        internal StanPublishAckTimeoutException() : base("Publish acknowledgement timeout.") { }
+        internal StanPublishAckTimeoutException(Exception e) : base("Publish acknowledgement timeout.", e) { }
     }
 
-    public class STANBadSubscriptionException : STANException
+    public class StanBadSubscriptionException : StanException
     {
-        internal STANBadSubscriptionException() : base("Invalid subscription.") { }
-        internal STANBadSubscriptionException(Exception e) : base("Invalid subscription.", e) { }
+        internal StanBadSubscriptionException() : base("Invalid subscription.") { }
+        internal StanBadSubscriptionException(Exception e) : base("Invalid subscription.", e) { }
     }
 
-    public class STANTimeoutException : STANException
+    public class StanTimeoutException : StanException
     {
-        internal STANTimeoutException() : base("A timeout occurred.") { }
-        internal STANTimeoutException(Exception e) : base("A timeout occurred.", e) { }
+        internal StanTimeoutException() : base("Operation timed out.") { }
+        internal StanTimeoutException(Exception e) : base("Operation timed out.", e) { }
+        internal StanTimeoutException(string msg) : base(msg) { }
     }
 
-    public class STANBadConnectionException : STANException
+    public class StanConnectRequestTimeoutException : StanTimeoutException
     {
-        internal STANBadConnectionException() : base("Invalid connection.") { }
-        internal STANBadConnectionException(Exception e) : base("Invalid connection.", e) { }
+        internal StanConnectRequestTimeoutException() : base("Connection Request Timed out.") { }
     }
 
-    public class STANManualAckException : STANException
+    public class StanConnectionException : StanException
     {
-        internal STANManualAckException() : base("Cannot manually ack in auto-ack mode.") { }
-        internal STANManualAckException(Exception e) : base("Cannot manually ack in auto-ack mode.", e) { }
+        internal StanConnectionException() : base("Invalid connection.") { }
+        internal StanConnectionException(Exception e) : base("Invalid connection.", e) { }
     }
 
-    public class STANNullMessageException : STANException
+    public class StanManualAckException : StanException
+    {
+        internal StanManualAckException() : base("Cannot manually ack in auto-ack mode.") { }
+        internal StanManualAckException(Exception e) : base("Cannot manually ack in auto-ack mode.", e) { }
+    }
+
+    public class STANNullMessageException : StanException
     {
         internal STANNullMessageException() : base("Null Message.") { }
         internal STANNullMessageException(Exception e) : base("Null Message.", e) { }

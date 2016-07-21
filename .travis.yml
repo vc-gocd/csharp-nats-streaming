@@ -1,0 +1,27 @@
+language: csharp
+mono:
+  - latest
+
+solution: STAN.sln
+
+cache:
+  directories:
+  - $HOME/nss
+
+before_install:
+  - bash install_nss.sh
+
+before_script:
+  - export PATH=$HOME/nss/nats-streaming-server-linux-amd64:$PATH
+
+install:
+  - sudo apt-get install -y gtk-sharp2
+  - nuget restore STAN.sln
+  - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner
+script:
+  - xbuild /p:Configuration=Release STAN.sln
+  - mono ./testrunner/xunit.runners.1.9.2/tools/xunit.console.clr4.exe ./STAN.Client.UnitTests/bin/Release/STAN.Client.UnitTests.dll
+
+notifications:
+  email: false
+

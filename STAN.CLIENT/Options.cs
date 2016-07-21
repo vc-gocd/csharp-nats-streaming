@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/*******************************************************************************
+ * Copyright (c) 2015-2016 Apcera Inc. All rights reserved. This program and the accompanying
+ * materials are made available under the terms of the MIT License (MIT) which accompanies this
+ * distribution, and is available at http://opensource.org/licenses/MIT
+ *******************************************************************************/
+ using System;
 
 namespace STAN.Client
 {
     public class Options
     {
-        // TODO:  Error checking
-
         internal string natsURL = Consts.DefaultNatsURL;
-        internal NATS.Client.Connection natsConn = null;
+        internal NATS.Client.IConnection natsConn = null;
         internal int connectTimeout = Consts.DefaultConnectWait;
         internal long ackTimeout = Consts.DefaultConnectWait;
         internal string discoverPrefix = Consts.DefaultDiscoverPrefix;
@@ -19,25 +18,23 @@ namespace STAN.Client
 
         internal Options() { }
 
+        private string deepCopy(string value)
+        {
+            if (value == null)
+                return null;
+
+            return string.Copy(value);
+        }
+
         internal Options(Options options)
         {
-            // TODO: Complete member initialization
             this.ackTimeout = options.ackTimeout;
-
-            if (options.natsURL != null)
-            {
-                this.natsURL = new String(options.NatsURL.ToCharArray());
-            }
-
-            this.connectTimeout = options.connectTimeout;
-            this.ConnectWait = options.ConnectWait;
-
-            if (options.discoverPrefix != null)
-            {
-                this.discoverPrefix = new String(options.discoverPrefix.ToCharArray());
-            }
-
-            this.maxPubAcksInflight = options.maxPubAcksInflight;
+            this.NatsURL = deepCopy(options.NatsURL);
+            this.ConnectTimeout = options.ConnectTimeout;
+            this.AckTimeout = options.AckTimeout;
+            this.DiscoverPrefix = deepCopy(options.DiscoverPrefix);
+            this.MaxPubAcksInFlight = options.MaxPubAcksInFlight;
+            this.NatsConn = options.NatsConn;
         }
 
 	    public string NatsURL
@@ -48,19 +45,27 @@ namespace STAN.Client
             }
             set
             {
+                if (natsURL == null)
+                    natsURL = Consts.DefaultNatsURL;
+
                 natsURL = value;
             }
         }
 
-        public NATS.Client.Connection NatsConn
+        public NATS.Client.IConnection NatsConn
         {
             get
             {
                 return natsConn;
             }
+            set
+            {
+                // allow null values for testing?
+                natsConn = value;
+            }
         }
 
-        public int ConnectWait
+        public int ConnectTimeout
         {
             get
             {
@@ -68,11 +73,14 @@ namespace STAN.Client
             }
             set
             {
+                if (value <= 0)
+                    throw new ArgumentOutOfRangeException("value", "Value must be greater than zero.");
+
                 connectTimeout = value;
             }
         }
 
-        public long PubAckWait
+        public long AckTimeout
         {
             get
             {
@@ -80,6 +88,9 @@ namespace STAN.Client
             }
             set
             {
+                if (value <= 0)
+                    throw new ArgumentOutOfRangeException("value", "Value must be greater than zero.");
+
                 ackTimeout = value;
             }
         }
@@ -92,6 +103,9 @@ namespace STAN.Client
             }
             set
             {
+                if (value == null)
+                    throw new ArgumentNullException("value", "Value cannot be null.");
+
                 discoverPrefix = value;
             }
         }
@@ -104,6 +118,9 @@ namespace STAN.Client
             }
             set
             {
+                if (value <= 0)
+                    throw new ArgumentOutOfRangeException("value", "Value must be greater than zero.");
+
                 maxPubAcksInflight = value;
             }
         }

@@ -1,12 +1,11 @@
-﻿// Copyright 2015 Apcera Inc. All rights reserved.
-
+﻿/*******************************************************************************
+ * Copyright (c) 2015-2016 Apcera Inc. All rights reserved. This program and the accompanying
+ * materials are made available under the terms of the MIT License (MIT) which accompanies this
+ * distribution, and is available at http://opensource.org/licenses/MIT
+ *******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace STAN.Client
 {
@@ -25,7 +24,7 @@ namespace STAN.Client
         {
             lock (dLock)
             {
-                return d.Count < maxSize;
+                return d.Count >= maxSize;
             }
         }
 
@@ -117,7 +116,7 @@ namespace STAN.Client
 
         internal void Add(TKey key, TValue value)
         {
-            waitForSpace();
+            //waitForSpace();
 
             lock (dLock)
             {
@@ -152,154 +151,6 @@ namespace STAN.Client
                 }
             }
         }
-    } // class Channel
-
-#if sdlfkj
-    // This channel class really a capacity bound blocking queue, is named the
-    // way it is so the code more closely reads with GO.  We implement our own channels 
-    // to be lightweight and performant - other concurrent classes do the
-    // task but are more heavyweight than what we want.
-    internal sealed class BlockingChannel<T>
-    {
-        Queue<T> q;
-        Object   qLock = new Object();
-        Object   writeLock = new Object(); 
-        bool     finished = false;
-        int      maxSize = 1024;
-        bool     atCapacity = false;
-        
-        internal bool isAtCapacity()
-        {
-            lock (qLock)
-            {
-                return q.Count < maxSize;
-            }
-        }
-
-        internal void waitForSpace()
-        {
-            lock (writeLock)
-            {
-                lock (qLock)
-                {
-                    atCapacity = q.Count >= maxSize;
-                }
-
-                if (atCapacity)
-                {
-                    Monitor.Wait(writeLock);
-                }
-            }
-        }
-
-        internal void notifySpaceAvailable()
-        {
-            lock (writeLock)
-            {
-                if (atCapacity)
-                {
-                    atCapacity = false;
-                    Monitor.Pulse(writeLock);
-                }
-            }
-        }
-        
-        internal BlockingChannel()
-        {
-            q = new Queue<T>(512);
-        }
-
-        internal BlockingChannel(int maxSize)
-        {
-            if (maxSize <= 0)
-                throw new ArgumentException("max size must be greater than 0");
-
-            this.maxSize = maxSize;
-
-            q = new Queue<T>(512);
-        }
-
-        internal T get(int timeout)
-        {
-            T rv = default(T);
-
-            lock (qLock)
-            {
-                if (!finished)
-                {
-                    if (q.Count > 0)
-                    {
-                        rv = q.Dequeue();
-                    }
-                    else
-                    {
-                        if (timeout < 0)
-                        {
-                            Monitor.Wait(qLock);
-                        }
-                        else
-                        {
-                            if (Monitor.Wait(qLock, timeout) == false)
-                            {
-                                throw new Exception("timeout");
-                            }
-                        }
-                    }
-                }
-                   
-                // we waited..
-                if (!finished)
-                {
-                    return q.Dequeue();
-                }
-            }
-
-            notifySpaceAvailable();
-
-            return rv;
-
-        } // get
-        
-        internal void add(T item)
-        {
-            waitForSpace();
-
-            lock (qLock)
-            {
-                q.Enqueue(item);
-
-                // if the queue count was previously zero, we were
-                // waiting, so signal.
-                if (q.Count <= 1)
-                {
-                    Monitor.Pulse(qLock);
-                }
-            }
-        }
-
-        internal void close()
-        {
-            lock (qLock)
-            {
-                finished = true;
-                Monitor.Pulse(qLock);
-            }
-        }
-
-        internal int Count
-        {
-            get
-            {
-                lock (qLock)
-                {
-                    return q.Count;
-                }
-            }
-        }
-
-    } // class Channel
-
-#endif
-
+    } // class BlockingChannel
 }
 

@@ -50,18 +50,18 @@ namespace STAN.Client {
             "dBACEhEKDVNlcXVlbmNlU3RhcnQQAxIJCgVGaXJzdBAEYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedCodeInfo(new[] {typeof(global::STAN.Client.StartPosition), }, new pbr::GeneratedCodeInfo[] {
-            new pbr::GeneratedCodeInfo(typeof(global::STAN.Client.PubMsg), global::STAN.Client.PubMsg.Parser, new[]{ "ClientID", "Guid", "Subject", "Reply", "Data", "Sha256" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::STAN.Client.PubAck), global::STAN.Client.PubAck.Parser, new[]{ "Guid", "Error" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::STAN.Client.MsgProto), global::STAN.Client.MsgProto.Parser, new[]{ "Sequence", "Subject", "Reply", "Data", "Timestamp", "Redelivered", "CRC32" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::STAN.Client.Ack), global::STAN.Client.Ack.Parser, new[]{ "Subject", "Sequence" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::STAN.Client.ConnectRequest), global::STAN.Client.ConnectRequest.Parser, new[]{ "ClientID", "HeartbeatInbox" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::STAN.Client.ConnectResponse), global::STAN.Client.ConnectResponse.Parser, new[]{ "PubPrefix", "SubRequests", "UnsubRequests", "CloseRequests", "Error", "PublicKey" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::STAN.Client.SubscriptionRequest), global::STAN.Client.SubscriptionRequest.Parser, new[]{ "ClientID", "Subject", "QGroup", "Inbox", "MaxInFlight", "AckWaitInSecs", "DurableName", "StartPosition", "StartSequence", "StartTimeDelta" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::STAN.Client.SubscriptionResponse), global::STAN.Client.SubscriptionResponse.Parser, new[]{ "AckInbox", "Error" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::STAN.Client.UnsubscribeRequest), global::STAN.Client.UnsubscribeRequest.Parser, new[]{ "ClientID", "Subject", "Inbox", "DurableName" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::STAN.Client.CloseRequest), global::STAN.Client.CloseRequest.Parser, new[]{ "ClientID" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::STAN.Client.CloseResponse), global::STAN.Client.CloseResponse.Parser, new[]{ "Error" }, null, null, null)
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::STAN.Client.StartPosition), }, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::STAN.Client.PubMsg), global::STAN.Client.PubMsg.Parser, new[]{ "ClientID", "Guid", "Subject", "Reply", "Data", "Sha256" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::STAN.Client.PubAck), global::STAN.Client.PubAck.Parser, new[]{ "Guid", "Error" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::STAN.Client.MsgProto), global::STAN.Client.MsgProto.Parser, new[]{ "Sequence", "Subject", "Reply", "Data", "Timestamp", "Redelivered", "CRC32" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::STAN.Client.Ack), global::STAN.Client.Ack.Parser, new[]{ "Subject", "Sequence" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::STAN.Client.ConnectRequest), global::STAN.Client.ConnectRequest.Parser, new[]{ "ClientID", "HeartbeatInbox" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::STAN.Client.ConnectResponse), global::STAN.Client.ConnectResponse.Parser, new[]{ "PubPrefix", "SubRequests", "UnsubRequests", "CloseRequests", "Error", "PublicKey" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::STAN.Client.SubscriptionRequest), global::STAN.Client.SubscriptionRequest.Parser, new[]{ "ClientID", "Subject", "QGroup", "Inbox", "MaxInFlight", "AckWaitInSecs", "DurableName", "StartPosition", "StartSequence", "StartTimeDelta" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::STAN.Client.SubscriptionResponse), global::STAN.Client.SubscriptionResponse.Parser, new[]{ "AckInbox", "Error" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::STAN.Client.UnsubscribeRequest), global::STAN.Client.UnsubscribeRequest.Parser, new[]{ "ClientID", "Subject", "Inbox", "DurableName" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::STAN.Client.CloseRequest), global::STAN.Client.CloseRequest.Parser, new[]{ "ClientID" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::STAN.Client.CloseResponse), global::STAN.Client.CloseResponse.Parser, new[]{ "Error" }, null, null, null)
           }));
     }
     #endregion
@@ -72,11 +72,11 @@ namespace STAN.Client {
   ///  Enum for start position type.
   /// </summary>
   public enum StartPosition {
-    NewOnly = 0,
-    LastReceived = 1,
-    TimeDeltaStart = 2,
-    SequenceStart = 3,
-    First = 4,
+    [pbr::OriginalName("NewOnly")] NewOnly = 0,
+    [pbr::OriginalName("LastReceived")] LastReceived = 1,
+    [pbr::OriginalName("TimeDeltaStart")] TimeDeltaStart = 2,
+    [pbr::OriginalName("SequenceStart")] SequenceStart = 3,
+    [pbr::OriginalName("First")] First = 4,
   }
 
   #endregion
@@ -126,7 +126,7 @@ namespace STAN.Client {
     public string ClientID {
       get { return clientID_; }
       set {
-        clientID_ = pb::Preconditions.CheckNotNull(value, "value");
+        clientID_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -139,7 +139,7 @@ namespace STAN.Client {
     public string Guid {
       get { return guid_; }
       set {
-        guid_ = pb::Preconditions.CheckNotNull(value, "value");
+        guid_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -152,7 +152,7 @@ namespace STAN.Client {
     public string Subject {
       get { return subject_; }
       set {
-        subject_ = pb::Preconditions.CheckNotNull(value, "value");
+        subject_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -165,7 +165,7 @@ namespace STAN.Client {
     public string Reply {
       get { return reply_; }
       set {
-        reply_ = pb::Preconditions.CheckNotNull(value, "value");
+        reply_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -178,7 +178,7 @@ namespace STAN.Client {
     public pb::ByteString Data {
       get { return data_; }
       set {
-        data_ = pb::Preconditions.CheckNotNull(value, "value");
+        data_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -191,7 +191,7 @@ namespace STAN.Client {
     public pb::ByteString Sha256 {
       get { return sha256_; }
       set {
-        sha256_ = pb::Preconditions.CheckNotNull(value, "value");
+        sha256_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -381,7 +381,7 @@ namespace STAN.Client {
     public string Guid {
       get { return guid_; }
       set {
-        guid_ = pb::Preconditions.CheckNotNull(value, "value");
+        guid_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -394,7 +394,7 @@ namespace STAN.Client {
     public string Error {
       get { return error_; }
       set {
-        error_ = pb::Preconditions.CheckNotNull(value, "value");
+        error_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -539,7 +539,7 @@ namespace STAN.Client {
     public string Subject {
       get { return subject_; }
       set {
-        subject_ = pb::Preconditions.CheckNotNull(value, "value");
+        subject_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -552,7 +552,7 @@ namespace STAN.Client {
     public string Reply {
       get { return reply_; }
       set {
-        reply_ = pb::Preconditions.CheckNotNull(value, "value");
+        reply_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -565,7 +565,7 @@ namespace STAN.Client {
     public pb::ByteString Data {
       get { return data_; }
       set {
-        data_ = pb::Preconditions.CheckNotNull(value, "value");
+        data_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -810,7 +810,7 @@ namespace STAN.Client {
     public string Subject {
       get { return subject_; }
       set {
-        subject_ = pb::Preconditions.CheckNotNull(value, "value");
+        subject_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -949,7 +949,7 @@ namespace STAN.Client {
     public string ClientID {
       get { return clientID_; }
       set {
-        clientID_ = pb::Preconditions.CheckNotNull(value, "value");
+        clientID_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -962,7 +962,7 @@ namespace STAN.Client {
     public string HeartbeatInbox {
       get { return heartbeatInbox_; }
       set {
-        heartbeatInbox_ = pb::Preconditions.CheckNotNull(value, "value");
+        heartbeatInbox_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1092,7 +1092,7 @@ namespace STAN.Client {
     public string PubPrefix {
       get { return pubPrefix_; }
       set {
-        pubPrefix_ = pb::Preconditions.CheckNotNull(value, "value");
+        pubPrefix_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1105,7 +1105,7 @@ namespace STAN.Client {
     public string SubRequests {
       get { return subRequests_; }
       set {
-        subRequests_ = pb::Preconditions.CheckNotNull(value, "value");
+        subRequests_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1118,7 +1118,7 @@ namespace STAN.Client {
     public string UnsubRequests {
       get { return unsubRequests_; }
       set {
-        unsubRequests_ = pb::Preconditions.CheckNotNull(value, "value");
+        unsubRequests_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1131,7 +1131,7 @@ namespace STAN.Client {
     public string CloseRequests {
       get { return closeRequests_; }
       set {
-        closeRequests_ = pb::Preconditions.CheckNotNull(value, "value");
+        closeRequests_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1144,7 +1144,7 @@ namespace STAN.Client {
     public string Error {
       get { return error_; }
       set {
-        error_ = pb::Preconditions.CheckNotNull(value, "value");
+        error_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1157,7 +1157,7 @@ namespace STAN.Client {
     public string PublicKey {
       get { return publicKey_; }
       set {
-        publicKey_ = pb::Preconditions.CheckNotNull(value, "value");
+        publicKey_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1355,7 +1355,7 @@ namespace STAN.Client {
     public string ClientID {
       get { return clientID_; }
       set {
-        clientID_ = pb::Preconditions.CheckNotNull(value, "value");
+        clientID_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1368,7 +1368,7 @@ namespace STAN.Client {
     public string Subject {
       get { return subject_; }
       set {
-        subject_ = pb::Preconditions.CheckNotNull(value, "value");
+        subject_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1381,7 +1381,7 @@ namespace STAN.Client {
     public string QGroup {
       get { return qGroup_; }
       set {
-        qGroup_ = pb::Preconditions.CheckNotNull(value, "value");
+        qGroup_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1394,7 +1394,7 @@ namespace STAN.Client {
     public string Inbox {
       get { return inbox_; }
       set {
-        inbox_ = pb::Preconditions.CheckNotNull(value, "value");
+        inbox_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1433,13 +1433,13 @@ namespace STAN.Client {
     public string DurableName {
       get { return durableName_; }
       set {
-        durableName_ = pb::Preconditions.CheckNotNull(value, "value");
+        durableName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
     /// <summary>Field number for the "startPosition" field.</summary>
     public const int StartPositionFieldNumber = 10;
-    private global::STAN.Client.StartPosition startPosition_ = global::STAN.Client.StartPosition.NewOnly;
+    private global::STAN.Client.StartPosition startPosition_ = 0;
     /// <summary>
     ///  Start position
     /// </summary>
@@ -1509,7 +1509,7 @@ namespace STAN.Client {
       if (MaxInFlight != 0) hash ^= MaxInFlight.GetHashCode();
       if (AckWaitInSecs != 0) hash ^= AckWaitInSecs.GetHashCode();
       if (DurableName.Length != 0) hash ^= DurableName.GetHashCode();
-      if (StartPosition != global::STAN.Client.StartPosition.NewOnly) hash ^= StartPosition.GetHashCode();
+      if (StartPosition != 0) hash ^= StartPosition.GetHashCode();
       if (StartSequence != 0UL) hash ^= StartSequence.GetHashCode();
       if (StartTimeDelta != 0L) hash ^= StartTimeDelta.GetHashCode();
       return hash;
@@ -1548,7 +1548,7 @@ namespace STAN.Client {
         output.WriteRawTag(58);
         output.WriteString(DurableName);
       }
-      if (StartPosition != global::STAN.Client.StartPosition.NewOnly) {
+      if (StartPosition != 0) {
         output.WriteRawTag(80);
         output.WriteEnum((int) StartPosition);
       }
@@ -1585,7 +1585,7 @@ namespace STAN.Client {
       if (DurableName.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(DurableName);
       }
-      if (StartPosition != global::STAN.Client.StartPosition.NewOnly) {
+      if (StartPosition != 0) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) StartPosition);
       }
       if (StartSequence != 0UL) {
@@ -1622,7 +1622,7 @@ namespace STAN.Client {
       if (other.DurableName.Length != 0) {
         DurableName = other.DurableName;
       }
-      if (other.StartPosition != global::STAN.Client.StartPosition.NewOnly) {
+      if (other.StartPosition != 0) {
         StartPosition = other.StartPosition;
       }
       if (other.StartSequence != 0UL) {
@@ -1726,7 +1726,7 @@ namespace STAN.Client {
     public string AckInbox {
       get { return ackInbox_; }
       set {
-        ackInbox_ = pb::Preconditions.CheckNotNull(value, "value");
+        ackInbox_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1739,7 +1739,7 @@ namespace STAN.Client {
     public string Error {
       get { return error_; }
       set {
-        error_ = pb::Preconditions.CheckNotNull(value, "value");
+        error_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1867,7 +1867,7 @@ namespace STAN.Client {
     public string ClientID {
       get { return clientID_; }
       set {
-        clientID_ = pb::Preconditions.CheckNotNull(value, "value");
+        clientID_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1880,7 +1880,7 @@ namespace STAN.Client {
     public string Subject {
       get { return subject_; }
       set {
-        subject_ = pb::Preconditions.CheckNotNull(value, "value");
+        subject_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1893,7 +1893,7 @@ namespace STAN.Client {
     public string Inbox {
       get { return inbox_; }
       set {
-        inbox_ = pb::Preconditions.CheckNotNull(value, "value");
+        inbox_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1906,7 +1906,7 @@ namespace STAN.Client {
     public string DurableName {
       get { return durableName_; }
       set {
-        durableName_ = pb::Preconditions.CheckNotNull(value, "value");
+        durableName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -2063,7 +2063,7 @@ namespace STAN.Client {
     public string ClientID {
       get { return clientID_; }
       set {
-        clientID_ = pb::Preconditions.CheckNotNull(value, "value");
+        clientID_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -2172,7 +2172,7 @@ namespace STAN.Client {
     public string Error {
       get { return error_; }
       set {
-        error_ = pb::Preconditions.CheckNotNull(value, "value");
+        error_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 

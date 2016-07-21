@@ -1,9 +1,0 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="STAN.Client.UnitTests.Properties" GeneratedClassName="Settings">
-  <Profiles />
-  <Settings>
-    <Setting Name="stan_server" Type="System.String" Scope="User">
-      <Value Profile="(Default)">stan-server.exe</Value>
-    </Setting>
-  </Settings>
-</SettingsFile>
