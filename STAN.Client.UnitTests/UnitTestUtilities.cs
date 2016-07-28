@@ -1,29 +1,59 @@
-﻿// Copyright 2016 Apcera Inc. All rights reserved.
-
+﻿/*******************************************************************************
+ * Copyright (c) 2015-2016 Apcera Inc. All rights reserved. This program and the accompanying
+ * materials are made available under the terms of the MIT License (MIT) which accompanies this
+ * distribution, and is available at http://opensource.org/licenses/MIT
+ *******************************************************************************/
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Reflection;
-using System.IO;
+using Xunit;
 
-namespace NATSUnitTests
+namespace STAN.Client.UnitTests
 {
-    class NATSServer : IDisposable
+    class NatsStreamingServer : IDisposable
     {
         // Enable this for additional server debugging info.
         bool debug = false;
         Process p;
 
-        public NATSServer()
+        private bool isNatsServerRunning()
         {
-            ProcessStartInfo psInfo = createProcessStartInfo(null);
+            try
+            {
+                NATS.Client.IConnection c = new NATS.Client.ConnectionFactory().CreateConnection();
+                c.Close();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public void init(bool shouldDebug)
+        {
+            debug = shouldDebug;
+            ProcessStartInfo psInfo = createProcessStartInfo();
             this.p = Process.Start(psInfo);
-            Thread.Sleep(500);
+            for (int i = 0; i < 20; i++)
+            {
+                Thread.Sleep(500);
+                if (isNatsServerRunning())
+                    break;
+            }
+            // Allow the Nats streaming server to setup.
+            Thread.Sleep(250);
+        }
+
+        public NatsStreamingServer()
+        {
+            init(false);
+        }
+
+        public NatsStreamingServer(bool shouldDebug)
+        {
+            init(shouldDebug);
         }
 
         private void addArgument(ProcessStartInfo psInfo, string arg)
@@ -40,58 +70,37 @@ namespace NATSUnitTests
             }
         }
 
-        public NATSServer(int port)
+        public NatsStreamingServer(int port)
         {
-            ProcessStartInfo psInfo = createProcessStartInfo(null);
+            ProcessStartInfo psInfo = createProcessStartInfo();
 
             addArgument(psInfo, "-p " + port);
 
             this.p = Process.Start(psInfo);
         }
 
-        private TestContext testContextInstance;
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
+        public NatsStreamingServer(string args)
         {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
-        public NATSServer(TestContext context, string args)
-        {
-            ProcessStartInfo psInfo = this.createProcessStartInfo(context);
+            ProcessStartInfo psInfo = this.createProcessStartInfo();
             addArgument(psInfo, args);
             p = Process.Start(psInfo);
         }
 
-        private ProcessStartInfo createProcessStartInfo(TestContext context)
+        private ProcessStartInfo createProcessStartInfo()
         {
-            string gnatsd = STAN.Client.UnitTests.Properties.Settings.Default.stan_server;
-            ProcessStartInfo psInfo = new ProcessStartInfo(gnatsd);
+            string nss = "nats-streaming-server";
+            ProcessStartInfo psInfo = new ProcessStartInfo(nss);
 
             if (debug)
             {
-                psInfo.Arguments = " -DV ";
+                psInfo.Arguments = " -SDV -DV";
             }
             else
             {
                 psInfo.WindowStyle = ProcessWindowStyle.Hidden;
             }
 
-            if (context != null)
-            {
-                psInfo.WorkingDirectory =
-                    UnitTestUtilities.GetConfigDir(context);
-            }
+            psInfo.WorkingDirectory = UnitTestUtilities.GetConfigDir();
 
             return psInfo;
         }
@@ -128,7 +137,7 @@ namespace NATSUnitTests
                 if (completed)
                     return;
 
-                Assert.IsTrue(Monitor.Wait(objLock, timeout));
+                Assert.True(Monitor.Wait(objLock, timeout));
             }
         }
 
@@ -153,14 +162,12 @@ namespace NATSUnitTests
     class UnitTestUtilities
     {
         Object mu = new Object();
-        static NATSServer defaultServer = null;
+        static NatsStreamingServer defaultServer = null;
         Process authServerProcess = null;
 
-        static internal string GetConfigDir(TestContext context)
+        static internal string GetConfigDir()
         {
-            string baseDir = context.TestRunDirectory.Substring(
-                0, context.TestRunDirectory.IndexOf("\\TestResults"));
-
+            string baseDir = Assembly.GetExecutingAssembly().CodeBase;
             return baseDir + "\\NATSUnitTests\\config";
         }
 
@@ -170,7 +177,7 @@ namespace NATSUnitTests
             {
                 if (defaultServer == null)
                 {
-                    defaultServer = new NATSServer();
+                    defaultServer = new NatsStreamingServer();
                 }
             }
         }
@@ -210,31 +217,31 @@ namespace NATSUnitTests
             catch (Exception e)
             {
                 System.Console.WriteLine(e);
-                Assert.IsInstanceOfType(e, exType);
+                Assert.IsAssignableFrom(exType, e);
                 return;
             }
 
-            Assert.Fail("No exception thrown!");
+            Assert.True(false, "No exception thrown!");
         }
 
-        internal NATSServer CreateServerOnPort(int p)
+        internal NatsStreamingServer CreateServerOnPort(int p)
         {
-            return new NATSServer(p);
+            return new NatsStreamingServer(p);
         }
 
-        internal NATSServer CreateServerWithConfig(TestContext context, string configFile)
+        internal NatsStreamingServer CreateServerWithConfig(string configFile)
         {
-            return new NATSServer(context, " -config " + configFile);
+            return new NatsStreamingServer(" -config " + configFile);
         }
 
-        internal NATSServer CreateServerWithArgs(TestContext context, string args)
+        internal NatsStreamingServer CreateServerWithArgs(string args)
         {
-            return new NATSServer(context, " " + args);
+            return new NatsStreamingServer(" " + args);
         }
 
-        internal static String GetFullCertificatePath(TestContext context, string certificateName)
+        internal static String GetFullCertificatePath(string certificateName)
         {
-            return GetConfigDir(context) + "\\certs\\" + certificateName;
+            return GetConfigDir() + "\\certs\\" + certificateName;
         }
 
         internal static void CleanupExistingServers()

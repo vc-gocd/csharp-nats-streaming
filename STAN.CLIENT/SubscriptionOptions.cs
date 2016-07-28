@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/*******************************************************************************
+ * Copyright (c) 2015-2016 Apcera Inc. All rights reserved. This program and the accompanying
+ * materials are made available under the terms of the MIT License (MIT) which accompanies this
+ * distribution, and is available at http://opensource.org/licenses/MIT
+ *******************************************************************************/
+using System;
 
 namespace STAN.Client
 {
@@ -16,7 +17,7 @@ namespace STAN.Client
         internal int ackWait = 30000;
         internal StartPosition startAt = StartPosition.NewOnly;
         internal ulong startSequence = 0;
-        internal DateTime startTime = DateTime.Now;
+        internal DateTime startTime;
         internal bool manualAcks = false;
 
         internal SubscriptionOptions() { }
@@ -33,14 +34,14 @@ namespace STAN.Client
                 this.durableName = new String(opts.durableName.ToCharArray());
             }
 
-            this.manualAcks = opts.manualAcks;
-            this.maxInFlight = opts.maxInFlight;
-            this.startAt = opts.startAt;
-            this.startSequence = opts.startSequence;
+            manualAcks = opts.manualAcks;
+            maxInFlight = opts.maxInFlight;
+            startAt = opts.startAt;
+            startSequence = opts.startSequence;
 
             if (opts.startTime != null)
             {
-                this.startTime = new DateTime(opts.startTime.Ticks);
+                this.startTime = opts.startTime;
             }
         }
 
@@ -70,14 +71,31 @@ namespace STAN.Client
         }
 
         /// <summary>
-        /// Controls the time the cluster will wait for an ACK for a given message.
+        /// Controls the time the cluster will wait for an ACK for a given message in milliseconds.
         /// </summary>
+        /// <remarks>
+        /// The value must be at least one second.
+        /// </remarks>
 	    public int AckWait
         {
             get { return ackWait; }
-            set { ackWait = value; }
+            set
+            {
+                if (value < 1000)
+                    throw new ArgumentException("value cannot be less than 1000");
+                        
+                ackWait = value;
+            }
         }
 
+        /// <summary>
+        /// Controls the time the cluster will wait for an ACK for a given message.
+        /// </summary>
+	    public bool ManualAcks
+        {
+            get { return manualAcks; }
+            set { manualAcks = value; }
+        }
 
         /// <summary>
         /// Optional start sequence number.
@@ -96,15 +114,6 @@ namespace STAN.Client
 	    public void StartAtTime(DateTime time)
         {
             startTime = time;
-            startAt = StartPosition.TimeDeltaStart;
-        }
-
-        /// <summary>
-        /// Optional Time span to start from.
-        /// </summary>
-        public void StartFrom(TimeSpan duration)
-        {
-            startTime = DateTime.Now.Subtract(duration);
             startAt = StartPosition.TimeDeltaStart;
         }
 
