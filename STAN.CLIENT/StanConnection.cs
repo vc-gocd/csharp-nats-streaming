@@ -111,21 +111,21 @@ namespace STAN.Client
 
         internal ProtocolSerializer ps = new ProtocolSerializer();
         
-        private Options opts = null;
+        private StanOptions opts = null;
 
 	    private NATS.Client.IConnection  nc;
         private bool ncOwned = false;
 
         private Connection() { }
         
-        internal Connection(string stanClusterID, string clientID, Options options)
+        internal Connection(string stanClusterID, string clientID, StanOptions options)
         {
             this.clientID = clientID;
 
             if (options != null)
-                this.opts = new Options(options);
+                this.opts = new StanOptions(options);
             else
-                this.opts = new Options();
+                this.opts = new StanOptions();
 
             if (opts.NatsConn == null)
             {
@@ -189,7 +189,7 @@ namespace STAN.Client
             closeRequests = response.CloseRequests;
 
             // setup the Ack subscription
-            ackSubject = Consts.DefaultACKPrefix + "." + newGUID();
+            ackSubject = StanConsts.DefaultACKPrefix + "." + newGUID();
             ackSubscription = nc.SubscribeAsync(ackSubject, processAck);
 
             // TODO:  hardcode or options?
@@ -357,7 +357,7 @@ namespace STAN.Client
             return a;
         }
 
-        private IStanSubscription subscribe(string subject, string qgroup, EventHandler<StanMsgHandlerArgs> handler, SubscriptionOptions options)
+        private IStanSubscription subscribe(string subject, string qgroup, EventHandler<StanMsgHandlerArgs> handler, StanSubscriptionOptions options)
         {
             AsyncSubscription sub = new AsyncSubscription(this, options);
 
@@ -436,7 +436,7 @@ namespace STAN.Client
             return Subscribe(subject, AsyncSubscription.DefaultOptions, handler);
         }
 
-        public IStanSubscription Subscribe(string subject, SubscriptionOptions options, EventHandler<StanMsgHandlerArgs> handler)
+        public IStanSubscription Subscribe(string subject, StanSubscriptionOptions options, EventHandler<StanMsgHandlerArgs> handler)
         {
             if (subject == null)
                 throw new ArgumentException("cannot be null", "subject");
@@ -453,7 +453,7 @@ namespace STAN.Client
             return Subscribe(subject, qgroup, AsyncSubscription.DefaultOptions, handler);
         }
 
-        public IStanSubscription Subscribe(string subject, string qgroup, SubscriptionOptions options, EventHandler<StanMsgHandlerArgs> handler)
+        public IStanSubscription Subscribe(string subject, string qgroup, StanSubscriptionOptions options, EventHandler<StanMsgHandlerArgs> handler)
         {
             if (subject == null)
                 throw new ArgumentException("cannot be null", "subject");

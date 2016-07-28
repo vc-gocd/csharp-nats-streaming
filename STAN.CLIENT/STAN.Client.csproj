@@ -52,14 +52,14 @@
   <ItemGroup>
     <Compile Include="AsyncSubscription.cs" />
     <Compile Include="BlockingChannel.cs" />
-    <Compile Include="Connection.cs" />
+    <Compile Include="StanConnection.cs" />
     <Compile Include="Consts.cs" />
-    <Compile Include="Msg.cs" />
+    <Compile Include="StanMsg.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="ProtocolSerializer.cs" />
     <Compile Include="StanAckHandlerArgs.cs" />
-    <Compile Include="IConnection.cs" />
-    <Compile Include="ISubscription.cs" />
+    <Compile Include="IStanConnection.cs" />
+    <Compile Include="IStanSubscription.cs" />
     <Compile Include="StanConnectionFactory.cs" />
     <Compile Include="STANExceptions.cs" />
     <Compile Include="StanMsgHandlerArgs.cs" />

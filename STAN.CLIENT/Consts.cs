@@ -3,99 +3,51 @@
  * materials are made available under the terms of the MIT License (MIT) which accompanies this
  * distribution, and is available at http://opensource.org/licenses/MIT
  *******************************************************************************/
+using NATS.Client;
 
 namespace STAN.Client
 {
-    class Consts
+    public class StanConsts
     {
+        /// <summary>
+        /// NATS C# streaming client version.
+        /// </summary>
 	    static public readonly string Version = "0.0.1";
+
+        /// <summary>
+        /// DefaultNatsURL is the default URL the client connects to.
+        /// </summary>
         static public readonly string DefaultNatsURL = "nats://localhost:4222";
+
+        /// <summary>
+        /// DefaultConnectWait is the default timeout used for the connect operation.
+        /// </summary>
         static public readonly int    DefaultConnectWait = 2000;
+
+        /// <summary>
+        /// DefaultDiscoverPrefix is the prefix subject used to connect to the NATS Streaming server.
+        /// </summary>
         static public readonly string DefaultDiscoverPrefix = "_STAN.discover";
+
+        /// <summary>
+        /// DefaultACKPrefix is the prefix subject used to send ACKs to the NATS Streaming server.
+        /// </summary>
         static public readonly string DefaultACKPrefix = "_STAN.acks";
-        static public readonly long   DefaultMaxPubAcksInflight = 16384;
 
-        static public readonly long DefaultAckWait = 3000;
+        /// <summary>
+        /// DefaultMaxPubAcksInflight is the default maximum number of published messages
+	    /// without outstanding ACKs from the server.
+        /// </summary>
+        static public readonly long DefaultMaxPubAcksInflight = 16384;
 
-        // TODO:  Differentiate the max in flight constants.
+        /// <summary>
+        /// DefaultAckWait indicates how long the server should wait for an ACK before resending a message.
+        /// </summary>
+        static public readonly long DefaultAckWait = 30000;
+
+        /// <summary>
+        /// DefaultMaxInflight indicates how many messages with outstanding ACKs the server can send.
+        /// </summary>
         static public readonly int  DefaultMaxInflight = 1024;
-    }
-
-    public class ConnectionOptions
-    {
-        string natsURL = Consts.DefaultNatsURL;
-        NATS.Client.IConnection natsConn = null;
-        long connectTimeout = Consts.DefaultConnectWait;
-        long ackTimeout = 5000;  // TODO:  ADD default
-        string discoverPrefix = Consts.DefaultDiscoverPrefix;
-        long maxPubsInFlight = Consts.DefaultMaxPubAcksInflight;
-
-	    string NatsURL
-        {
-            get
-            {
-                return natsURL;
-            }
-            set
-            {
-                natsURL = value;
-            }
-        }
-            
-	    NATS.Client.IConnection NatsConn
-        {
-            get
-            {
-                return natsConn;
-            }
-        }
-
-        long ConnectTimeout
-        {
-            get
-            {
-                return connectTimeout;
-            }
-            set
-            {
-                connectTimeout = value;
-            }
-        }
-
-        long AckTimeout
-        {
-            get
-            {
-                return ackTimeout;
-            }
-            set
-            {
-                ackTimeout = value;
-            }
-        }
-
-        string DiscoverPrefix
-        {
-            get
-            {
-                return discoverPrefix;
-            }
-            set
-            {
-                discoverPrefix = value;
-            }
-        }
-
-        long MaxPubAcksInFlight
-        {
-            get
-            {
-                return maxPubsInFlight;
-            }
-            set
-            {
-                maxPubsInFlight = value;
-            }
-        }
-    }
+   }
 }

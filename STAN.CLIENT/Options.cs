@@ -3,20 +3,24 @@
  * materials are made available under the terms of the MIT License (MIT) which accompanies this
  * distribution, and is available at http://opensource.org/licenses/MIT
  *******************************************************************************/
- using System;
+using System;
+using NATS.Client;
 
 namespace STAN.Client
 {
-    public class Options
+    /// <summary>
+    /// Options available to configure a connection to the NATS streaming server.
+    /// </summary>
+    public class StanOptions
     {
-        internal string natsURL = Consts.DefaultNatsURL;
-        internal NATS.Client.IConnection natsConn = null;
-        internal int connectTimeout = Consts.DefaultConnectWait;
-        internal long ackTimeout = Consts.DefaultConnectWait;
-        internal string discoverPrefix = Consts.DefaultDiscoverPrefix;
-        internal long maxPubAcksInflight = Consts.DefaultMaxPubAcksInflight;
+        internal string natsURL = StanConsts.DefaultNatsURL;
+        internal IConnection natsConn = null;
+        internal int connectTimeout = StanConsts.DefaultConnectWait;
+        internal long ackTimeout = StanConsts.DefaultConnectWait;
+        internal string discoverPrefix = StanConsts.DefaultDiscoverPrefix;
+        internal long maxPubAcksInflight = StanConsts.DefaultMaxPubAcksInflight;
 
-        internal Options() { }
+        internal StanOptions() { }
 
         private string deepCopy(string value)
         {
@@ -26,15 +30,15 @@ namespace STAN.Client
             return string.Copy(value);
         }
 
-        internal Options(Options options)
+        internal StanOptions(StanOptions options)
         {
-            this.ackTimeout = options.ackTimeout;
-            this.NatsURL = deepCopy(options.NatsURL);
-            this.ConnectTimeout = options.ConnectTimeout;
-            this.AckTimeout = options.AckTimeout;
-            this.DiscoverPrefix = deepCopy(options.DiscoverPrefix);
-            this.MaxPubAcksInFlight = options.MaxPubAcksInFlight;
-            this.NatsConn = options.NatsConn;
+            ackTimeout = options.ackTimeout;
+            NatsURL = deepCopy(options.NatsURL);
+            ConnectTimeout = options.ConnectTimeout;
+            AckTimeout = options.AckTimeout;
+            DiscoverPrefix = deepCopy(options.DiscoverPrefix);
+            MaxPubAcksInFlight = options.MaxPubAcksInFlight;
+            NatsConn = options.NatsConn;
         }
 
 	    public string NatsURL
@@ -46,13 +50,13 @@ namespace STAN.Client
             set
             {
                 if (natsURL == null)
-                    natsURL = Consts.DefaultNatsURL;
+                    natsURL = StanConsts.DefaultNatsURL;
 
                 natsURL = value;
             }
         }
 
-        public NATS.Client.IConnection NatsConn
+        public IConnection NatsConn
         {
             get
             {
@@ -123,6 +127,15 @@ namespace STAN.Client
 
                 maxPubAcksInflight = value;
             }
+        }
+
+        /// <summary>
+        /// Returns the default connection options.
+        /// </summary>
+        /// <returns></returns>
+        public static StanOptions GetDefaultOptions()
+        {
+            return new StanOptions();
         }
     }
 }

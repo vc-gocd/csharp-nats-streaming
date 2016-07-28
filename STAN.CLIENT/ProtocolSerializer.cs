@@ -8,16 +8,9 @@ using Google.Protobuf;
 
 namespace STAN.Client
 {
-    /// <summary>
-    /// Keep protocol serialization encapulated here.
-    /// </summary>
+    // Keep protocol serialization encapulated here.
     internal class ProtocolSerializer
     {
-        /// <summary>
-        /// Makes a copy of bytes representing the serialized protocol buffer.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
         internal static byte[] marshal(Object req)
         {
             return ((IMessage)req).ToByteArray();

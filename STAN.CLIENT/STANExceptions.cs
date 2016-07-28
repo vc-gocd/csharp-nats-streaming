@@ -7,6 +7,9 @@ using System;
 
 namespace STAN.Client
 {
+    /// <summary>
+    /// A general exception thrown by the NATS streaming server client.
+    /// </summary>
     public class StanException : Exception
     {
         internal StanException() : base() { }
@@ -14,6 +17,9 @@ namespace STAN.Client
         internal StanException(string err, Exception innerEx) : base(err, innerEx) { }
     }
 
+    /// <summary>
+    /// This exception is thrown when 
+    /// </summary>
     public class StanConnectRequestException : StanException
     {
         internal StanConnectRequestException() : base("Connection request timeout.") { }

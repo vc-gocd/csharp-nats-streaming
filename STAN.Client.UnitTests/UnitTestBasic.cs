@@ -52,6 +52,7 @@ namespace STAN.Client.UnitTests
                     () => new StanConnectionFactory().CreateConnection("invalid", CLIENT_ID));
             }
         }
+
         [Fact]
         public void TestNatsConnNotClosedOnClose()
         {
@@ -59,7 +60,7 @@ namespace STAN.Client.UnitTests
             {
                 using (NATS.Client.IConnection nc = new NATS.Client.ConnectionFactory().CreateConnection())
                 {
-                    var opts = StanConnectionFactory.DefaultOptions;
+                    var opts = StanOptions.GetDefaultOptions();
                     opts.NatsConn = nc;
                     IStanConnection sc = new StanConnectionFactory().CreateConnection(CLUSTER_ID, CLIENT_ID, opts);
                     sc.Close();
@@ -382,7 +383,7 @@ namespace STAN.Client.UnitTests
                         c.Publish("foo", payload);
                     }
 
-                    var sOpts = StanConnectionFactory.DefaultSubscriptionOptions;
+                    var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                     sOpts.StartWithLastReceived();
                     var sub = c.Subscribe("foo", sOpts, (obj, args) =>
                     {
@@ -435,7 +436,7 @@ namespace STAN.Client.UnitTests
                         }
                     };
 
-                    var sOpts = StanConnectionFactory.DefaultSubscriptionOptions;
+                    var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                     sOpts.StartAtSequence(500);
 
                     Assert.Throws<StanException>(() => (c.Subscribe("foo", sOpts, eh)));
@@ -503,7 +504,7 @@ namespace STAN.Client.UnitTests
                     // check for illegal config
                     Thread.Sleep(500);
 
-                    var sOpts = StanConnectionFactory.DefaultSubscriptionOptions;
+                    var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                     sOpts.StartAtTime(DateTime.Now);
                     Assert.Throws<StanException>(() => (c.Subscribe("foo", sOpts, eh)));
 
@@ -529,13 +530,78 @@ namespace STAN.Client.UnitTests
         }
 
         [Fact]
+        public void TestSubscriptionStartAtTimeDelta()
+        {
+            int count = 10;
+            long received = 0;
+            long shouldReceive = 5;
+            List<StanMsg> savedMsgs = new List<StanMsg>();
+            DateTime startTime;
+
+            AutoResetEvent ev = new AutoResetEvent(false);
+
+            using (new NatsStreamingServer())
+            {
+                using (var c = DefaultConnection)
+                {
+                    for (int i = 1; i <= 5; i++)
+                    {
+                        byte[] payload = BitConverter.GetBytes(i);
+                        c.Publish("foo", payload);
+                    }
+
+                    Thread.Sleep(500);
+                    startTime = DateTime.Now;
+                    Thread.Sleep(500);
+
+                    for (int i = 6; i <= 10; i++)
+                    {
+                        byte[] payload = BitConverter.GetBytes(i);
+                        c.Publish("foo", payload);
+                    }
+
+                    EventHandler<StanMsgHandlerArgs> eh = (obj, args) =>
+                    {
+                        savedMsgs.Add(args.Message);
+                        if (Interlocked.Increment(ref received) == shouldReceive)
+                        {
+                            ev.Set();
+                        }
+                    };
+
+                    // check for illegal config
+                    Thread.Sleep(500);
+
+                    var sOpts = StanSubscriptionOptions.GetDefaultOptions();
+                    sOpts.StartAtTimeDelta(DateTime.Now - startTime);
+                    c.Subscribe("foo", sOpts, eh);
+
+                    Assert.True(ev.WaitOne(DEFAULT_WAIT * 20));
+                }
+            }
+
+            int seq = 5;
+            foreach (StanMsg m in savedMsgs)
+            {
+                seq++;
+                Assert.True(m.Sequence == (ulong)seq);
+                Assert.True(m.TimeStamp > startTime);
+                Assert.True(BitConverter.ToInt32(m.Data, 0) == seq);
+            }
+
+            Assert.True(seq == count,
+                string.Format("Received max seq {0}, expected max {1}",
+                seq, count));
+        }
+
+        [Fact]
         public void TestSubscriptionStartAtWithEmptyStore()
         {
             using (new NatsStreamingServer())
             {
                 using (var c = DefaultConnection)
                 {
-                    var opts = StanConnectionFactory.DefaultSubscriptionOptions;
+                    var opts = StanSubscriptionOptions.GetDefaultOptions();
 
                     opts.StartAtTime(DateTime.Now);
                     Assert.Throws<StanException>(() => c.Subscribe("foo", opts, noopMh));
@@ -585,7 +651,7 @@ namespace STAN.Client.UnitTests
                         }
                     };
 
-                    var sOpts = StanConnectionFactory.DefaultSubscriptionOptions;
+                    var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                     sOpts.DeliverAllAvailable();
                     c.Subscribe("foo", sOpts, eh);
 
@@ -646,7 +712,7 @@ namespace STAN.Client.UnitTests
         {
             using (new NatsStreamingServer())
             {
-                var cOpts = StanConnectionFactory.DefaultOptions;
+                var cOpts = StanOptions.GetDefaultOptions();
                 cOpts.AckTimeout = 50;
                 using (var c = new StanConnectionFactory().CreateConnection(CLUSTER_ID, CLIENT_ID, cOpts))
                 {
@@ -721,9 +787,9 @@ namespace STAN.Client.UnitTests
                 Assert.Throws<StanConnectionClosedException>(()=> c.Publish("foo", null));
                 Assert.Throws<StanConnectionClosedException>(()=> c.Publish("foo", null, (obj, args)=> {/* noop */}));
                 Assert.Throws<StanConnectionClosedException>(()=> c.Subscribe("foo", noopMh));
-                Assert.Throws<StanConnectionClosedException>(()=> c.Subscribe("foo", StanConnectionFactory.DefaultSubscriptionOptions, noopMh));
+                Assert.Throws<StanConnectionClosedException>(()=> c.Subscribe("foo", StanSubscriptionOptions.GetDefaultOptions(), noopMh));
                 Assert.Throws<StanConnectionClosedException>(()=> c.Subscribe("foo", "bar", noopMh));
-                Assert.Throws<StanConnectionClosedException>(()=> c.Subscribe("foo", "bar", StanConnectionFactory.DefaultSubscriptionOptions, noopMh));
+                Assert.Throws<StanConnectionClosedException>(()=> c.Subscribe("foo", "bar", StanSubscriptionOptions.GetDefaultOptions(), noopMh));
             }
 
             Assert.False(received);
@@ -760,7 +826,7 @@ namespace STAN.Client.UnitTests
                     }
 
                     // Test we get an exception manually acking an auto ack.
-                    var sOpts = StanConnectionFactory.DefaultSubscriptionOptions;
+                    var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                     sOpts.DeliverAllAvailable();
                     sOpts.ManualAcks = true;
                     sOpts.MaxInflight = 10;
@@ -876,7 +942,7 @@ namespace STAN.Client.UnitTests
                         c.Publish("foo", null);
                     }
 
-                    var sOpts = StanConnectionFactory.DefaultSubscriptionOptions;
+                    var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                     // make sure we get an error from an invalid Ack wait
                     Assert.Throws<ArgumentException>(() => { sOpts.AckWait = 500; });
 
@@ -926,7 +992,7 @@ namespace STAN.Client.UnitTests
                         c.Publish("foo", null);
                     }
 
-                    var sOpts = StanConnectionFactory.DefaultSubscriptionOptions;
+                    var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                     // make sure we get an error from an invalid Ack wait
                     Assert.Throws<ArgumentException>(() => { sOpts.AckWait = 500; });
 
@@ -1025,7 +1091,7 @@ namespace STAN.Client.UnitTests
                     };
 
                     IStanSubscription s = null;
-                    var sOpts = StanConnectionFactory.DefaultSubscriptionOptions;
+                    var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                     sOpts.AckWait = ackRedeliveryTime;
                     sOpts.ManualAcks = true;
 
@@ -1101,7 +1167,7 @@ namespace STAN.Client.UnitTests
                     c.Publish("foo", null);
                 }
 
-                var sOpts = StanConnectionFactory.DefaultSubscriptionOptions;
+                var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                 sOpts.DeliverAllAvailable();
                 sOpts.DurableName = "durable-foo";
 
@@ -1330,7 +1396,7 @@ namespace STAN.Client.UnitTests
             {
                 using (var c = DefaultConnection)
                 {
-                    var sOpts = StanConnectionFactory.DefaultSubscriptionOptions;
+                    var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                     sOpts.ManualAcks = true;
 
                     s1 = c.Subscribe("foo", "bar", sOpts, mh);
@@ -1390,7 +1456,7 @@ namespace STAN.Client.UnitTests
             {
                 using (var c = DefaultConnection)
                 {
-                    var sOpts = StanConnectionFactory.DefaultSubscriptionOptions;
+                    var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                     sOpts.ManualAcks = true;
 
                     s1 = c.Subscribe("foo", "bar", sOpts, mh);
@@ -1429,7 +1495,7 @@ namespace STAN.Client.UnitTests
                         c.Publish("foo", null);
                     }
 
-                    var sOpts = StanConnectionFactory.DefaultSubscriptionOptions;
+                    var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                     sOpts.DeliverAllAvailable();
                     sOpts.ManualAcks = true;
                     sOpts.AckWait = 1000;
@@ -1437,7 +1503,6 @@ namespace STAN.Client.UnitTests
                     var s = c.Subscribe("foo", sOpts, (obj, args) =>
                     {
                         var m = args.Message;
-                        System.Console.WriteLine("Received msg {0}", m.Sequence);
                         lock (msgsLock)
                         {
                             msgMap[m.Sequence] = m;
@@ -1446,7 +1511,6 @@ namespace STAN.Client.UnitTests
                         // only ack odd numbers
                         if (m.Sequence % 2 != 0)
                         {
-                            System.Console.WriteLine("Acked msg {0}", m.Sequence);
                             m.Ack();
                         }
 
@@ -1507,7 +1571,7 @@ namespace STAN.Client.UnitTests
 
                     pubBatch.WaitOne(DEFAULT_WAIT);
 
-                    var sOpts = StanConnectionFactory.DefaultSubscriptionOptions;
+                    var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                     sOpts.DeliverAllAvailable();
                     using (var s = c.Subscribe("foo", sOpts, eh))
                     {
@@ -1553,7 +1617,7 @@ namespace STAN.Client.UnitTests
                     c.Publish("foo", null);
                 }
 
-                var sOpts = StanConnectionFactory.DefaultSubscriptionOptions;
+                var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                 sOpts.ManualAcks = true;
                 sOpts.DeliverAllAvailable();
                 var s = c.Subscribe("foo", sOpts, (obj, args) =>
@@ -1584,7 +1648,7 @@ namespace STAN.Client.UnitTests
 
                 var nc2 = new NATS.Client.ConnectionFactory().CreateConnection();
 
-                var opts = StanConnectionFactory.DefaultOptions;
+                var opts = StanOptions.GetDefaultOptions();
                 opts.NatsConn = nc2;
                 var c2 = new StanConnectionFactory().CreateConnection(CLUSTER_ID, CLIENT_ID, opts);
                 Assert.True(nc2 == c2.NATSConnection);
@@ -1602,7 +1666,7 @@ namespace STAN.Client.UnitTests
             using (new NatsStreamingServer())
             {
                 AutoResetEvent ev = new AutoResetEvent(false);
-                var opts = StanConnectionFactory.DefaultOptions;
+                var opts = StanOptions.GetDefaultOptions();
                 opts.AckTimeout = 1100;
                 opts.MaxPubAcksInFlight = 1;
 

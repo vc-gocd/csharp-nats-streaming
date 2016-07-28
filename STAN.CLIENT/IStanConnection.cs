@@ -19,11 +19,11 @@ namespace STAN.Client
 
 	    IStanSubscription Subscribe(string subject, EventHandler<StanMsgHandlerArgs> handler);
 
-        IStanSubscription Subscribe(string subject, SubscriptionOptions options, EventHandler<StanMsgHandlerArgs> handler);
+        IStanSubscription Subscribe(string subject, StanSubscriptionOptions options, EventHandler<StanMsgHandlerArgs> handler);
 
         IStanSubscription Subscribe(string subject, string qgroup, EventHandler<StanMsgHandlerArgs> handler);
 
-        IStanSubscription Subscribe(string subject, string qgroup, SubscriptionOptions options, EventHandler<StanMsgHandlerArgs> handler);
+        IStanSubscription Subscribe(string subject, string qgroup, StanSubscriptionOptions options, EventHandler<StanMsgHandlerArgs> handler);
 
         void Close();
 

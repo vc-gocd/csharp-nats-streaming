@@ -13,7 +13,6 @@ namespace STAN.Client.UnitTests
 {
     class NatsStreamingServer : IDisposable
     {
-        // Enable this for additional server debugging info.
         bool debug = false;
         Process p;
 
@@ -33,6 +32,8 @@ namespace STAN.Client.UnitTests
 
         public void init(bool shouldDebug)
         {
+            UnitTestUtilities.CleanupExistingServers();
+
             debug = shouldDebug;
             ProcessStartInfo psInfo = createProcessStartInfo();
             this.p = Process.Start(psInfo);
@@ -125,45 +126,10 @@ namespace STAN.Client.UnitTests
         }
     }
 
-    class ConditionalObj
-    {
-        Object objLock = new Object();
-        bool completed = false;
-
-        internal void wait(int timeout)
-        {
-            lock (objLock)
-            {
-                if (completed)
-                    return;
-
-                Assert.True(Monitor.Wait(objLock, timeout));
-            }
-        }
-
-        internal void reset()
-        {
-            lock (objLock)
-            {
-                completed = false;
-            }
-        }
-
-        internal void notify()
-        {
-            lock (objLock)
-            {
-                completed = true;
-                Monitor.Pulse(objLock);
-            }
-        }
-    }
-
     class UnitTestUtilities
     {
-        Object mu = new Object();
+        object mu = new object();
         static NatsStreamingServer defaultServer = null;
-        Process authServerProcess = null;
 
         static internal string GetConfigDir()
         {
@@ -203,52 +169,11 @@ namespace STAN.Client.UnitTests
             StartDefaultServer();
         }
 
-        public void startAuthServer()
-        {
-            authServerProcess = Process.Start("stan-server -config auth.conf");
-        }
-
-        internal static void testExpectedException(Action call, Type exType)
-        {
-            try
-            {
-                call.Invoke();
-            }
-            catch (Exception e)
-            {
-                System.Console.WriteLine(e);
-                Assert.IsAssignableFrom(exType, e);
-                return;
-            }
-
-            Assert.True(false, "No exception thrown!");
-        }
-
-        internal NatsStreamingServer CreateServerOnPort(int p)
-        {
-            return new NatsStreamingServer(p);
-        }
-
-        internal NatsStreamingServer CreateServerWithConfig(string configFile)
-        {
-            return new NatsStreamingServer(" -config " + configFile);
-        }
-
-        internal NatsStreamingServer CreateServerWithArgs(string args)
-        {
-            return new NatsStreamingServer(" " + args);
-        }
-
-        internal static String GetFullCertificatePath(string certificateName)
-        {
-            return GetConfigDir() + "\\certs\\" + certificateName;
-        }
-
         internal static void CleanupExistingServers()
         {
             try
             {
-                Process[] procs = Process.GetProcessesByName("stan-server");
+                Process[] procs = Process.GetProcessesByName("nats-streaming-server");
 
                 foreach (Process proc in procs)
                 {

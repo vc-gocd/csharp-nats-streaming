@@ -3,6 +3,7 @@
  * materials are made available under the terms of the MIT License (MIT) which accompanies this
  * distribution, and is available at http://opensource.org/licenses/MIT
  *******************************************************************************/
+using NATS.Client;
 using System;
 using System.Threading;
 
@@ -11,7 +12,7 @@ namespace STAN.Client
     class AsyncSubscription : IStanSubscription
     {
         private object mu = new Object();
-        private SubscriptionOptions options;
+        private StanSubscriptionOptions options;
         private string inbox = null;
         private string subject = null;
         private Connection sc = null;
@@ -22,12 +23,12 @@ namespace STAN.Client
 
         ReaderWriterLockSlim rwLock = new ReaderWriterLockSlim();
 
-        internal AsyncSubscription(Connection sc, SubscriptionOptions opts)
+        internal AsyncSubscription(Connection stanConnection, StanSubscriptionOptions opts)
         {
             // TODO: Complete member initialization
-            this.options = new SubscriptionOptions(opts);
-            this.inbox = Connection.newInbox();
-            this.sc = sc;
+            options = new StanSubscriptionOptions(opts);
+            inbox = Connection.newInbox();
+            sc = stanConnection;
         }
 
         internal string Inbox
@@ -74,7 +75,10 @@ namespace STAN.Client
                 switch (sr.StartPosition)
                 {
                     case StartPosition.TimeDeltaStart:
-                        sr.StartTimeDelta = convertTimeSpan(DateTime.Now - options.startTime);
+                        sr.StartTimeDelta = convertTimeSpan(
+                            options.useStartTimeDelta ? 
+                                options.startTimeDelta : 
+                                (DateTime.Now - options.startTime));
                         break;
                     case StartPosition.SequenceStart:
                         sr.StartSequence = options.startSequence;
@@ -84,7 +88,7 @@ namespace STAN.Client
                 byte[] b = ProtocolSerializer.marshal(sr);
 
                 // TODO:  Configure request timeout?
-                NATS.Client.Msg m = sc.NATSConnection.Request(subRequestSubject, b, 2000);
+                Msg m = sc.NATSConnection.Request(subRequestSubject, b, 2000);
 
                 SubscriptionResponse r = new SubscriptionResponse();
                 ProtocolSerializer.unmarshal(m.Data, r);
@@ -212,9 +216,9 @@ namespace STAN.Client
             }
         }
 
-        internal static SubscriptionOptions DefaultOptions
+        internal static StanSubscriptionOptions DefaultOptions
         {
-            get { return new SubscriptionOptions(); }
+            get { return new StanSubscriptionOptions(); }
         }
     }
 }
