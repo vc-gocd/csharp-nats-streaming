@@ -116,8 +116,6 @@ namespace STAN.Client
 
         internal void Add(TKey key, TValue value)
         {
-            //waitForSpace();
-
             lock (dLock)
             {
                 
