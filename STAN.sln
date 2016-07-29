@@ -5,14 +5,11 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STAN.Client", "STAN.CLIENT\STAN.Client.csproj", "{A92ECD64-3BA4-4AB2-BD58-5E4D97AF972C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{CA27243E-745F-4FB9-ACFF-B387AB33C204}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\packages.config = .nuget\packages.config
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STAN.Client.UnitTests", "STAN.Client.UnitTests\STAN.Client.UnitTests.csproj", "{72E03EF2-C7AF-49EA-B6E0-1FB8E3204053}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stan-sub", "examples\stan-sub\stan-sub.csproj", "{F74C9C78-1CE9-440B-A276-8B4FE46BF3E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stan-pub", "examples\stan-pub\stan-pub.csproj", "{7E321D88-4117-456D-B9CF-03F2042D608D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +29,10 @@ Global
 		{F74C9C78-1CE9-440B-A276-8B4FE46BF3E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F74C9C78-1CE9-440B-A276-8B4FE46BF3E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F74C9C78-1CE9-440B-A276-8B4FE46BF3E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E321D88-4117-456D-B9CF-03F2042D608D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E321D88-4117-456D-B9CF-03F2042D608D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E321D88-4117-456D-B9CF-03F2042D608D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E321D88-4117-456D-B9CF-03F2042D608D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

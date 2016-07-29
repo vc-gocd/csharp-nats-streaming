@@ -7,7 +7,7 @@ using System;
 using System.Threading;
 using System.Diagnostics;
 using System.Reflection;
-using Xunit;
+using NATS.Client;
 
 namespace STAN.Client.UnitTests
 {
@@ -20,7 +20,7 @@ namespace STAN.Client.UnitTests
         {
             try
             {
-                NATS.Client.IConnection c = new NATS.Client.ConnectionFactory().CreateConnection();
+                IConnection c = new NATS.Client.ConnectionFactory().CreateConnection();
                 c.Close();
                 return true;
             }

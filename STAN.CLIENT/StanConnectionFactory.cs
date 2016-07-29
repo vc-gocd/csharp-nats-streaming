@@ -6,12 +6,15 @@
 
 namespace STAN.Client
 {
-    public class StanConnectionFactory
+    /// <summary>
+    /// Creates a connection to the NATS streaming server.
+    /// </summary>
+    public sealed class StanConnectionFactory
     {
         /// <summary>
         /// Creates a connection to the server.
         /// </summary>
-        /// <param name="stanClusterID"></param>
+        /// <param name="clusterID"></param>
         /// <param name="clientID"></param>
         /// <param name="options"></param>
         /// <returns></returns>

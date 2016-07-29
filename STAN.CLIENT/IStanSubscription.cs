@@ -12,6 +12,9 @@ namespace STAN.Client
     /// </summary>
     public interface IStanSubscription : IDisposable
     {
+        /// <summary>
+        /// Removes interest in the given subject.
+        /// </summary>
         void Unsubscribe();
     }
 }

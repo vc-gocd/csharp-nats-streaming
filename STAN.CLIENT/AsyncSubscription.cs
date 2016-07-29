@@ -170,7 +170,7 @@ namespace STAN.Client
             bool isManualAck  = options.manualAcks;
             string localAckSubject = ackInbox;
             IStanConnection subsSc = sc;
-            NATS.Client.IConnection localNc = null;
+            IConnection localNc = null;
 
             if (subsSc != null)
             {

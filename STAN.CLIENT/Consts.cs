@@ -7,6 +7,9 @@ using NATS.Client;
 
 namespace STAN.Client
 {
+    /// <summary>
+    /// NATS Streaming client constants.
+    /// </summary>
     public class StanConsts
     {
         /// <summary>

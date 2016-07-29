@@ -18,7 +18,7 @@ namespace STAN.Client
     }
 
     /// <summary>
-    /// This exception is thrown when 
+    /// An exception representing the case when an error occurs in the connection request.
     /// </summary>
     public class StanConnectRequestException : StanException
     {
@@ -27,6 +27,9 @@ namespace STAN.Client
         internal StanConnectRequestException(Exception e) : base("Connection request timeout.", e) { }
     }
 
+    /// <summary>
+    /// An exception representing the case when an error occurs closing a connection.
+    /// </summary>
     public class StanCloseRequestException : StanException
     {
         internal StanCloseRequestException() : base("Close request timeout.") { }
@@ -34,24 +37,38 @@ namespace STAN.Client
         internal StanCloseRequestException(Exception e) : base("Close request timeout.", e) { }
     }
 
+    /// <summary>
+    /// An exception representing the case when an error occurs closing a connection.
+    /// </summary>
     public class StanConnectionClosedException : StanException
     {
         internal StanConnectionClosedException() : base("Connection closed.") { }
         internal StanConnectionClosedException(Exception e) : base("Connection closed.", e) { }
     }
 
+    /// <summary>
+    /// An exception representing the case when a publish times out waiting for an 
+    /// acknowledgement.
+    /// </summary>
     public class StanPublishAckTimeoutException : StanException
     {
         internal StanPublishAckTimeoutException() : base("Publish acknowledgement timeout.") { }
         internal StanPublishAckTimeoutException(Exception e) : base("Publish acknowledgement timeout.", e) { }
     }
 
+    /// <summary>
+    /// An exception representing the case when an operation is performed on a subscription
+    /// that is no longer valid.
+    /// </summary>
     public class StanBadSubscriptionException : StanException
     {
         internal StanBadSubscriptionException() : base("Invalid subscription.") { }
         internal StanBadSubscriptionException(Exception e) : base("Invalid subscription.", e) { }
     }
 
+    /// <summary>
+    /// An exception representing the general case when an operation times out.
+    /// </summary>
     public class StanTimeoutException : StanException
     {
         internal StanTimeoutException() : base("Operation timed out.") { }
@@ -59,28 +76,32 @@ namespace STAN.Client
         internal StanTimeoutException(string msg) : base(msg) { }
     }
 
+    /// <summary>
+    /// An exception representing the case when a connection attempt times out.
+    /// </summary>
     public class StanConnectRequestTimeoutException : StanTimeoutException
     {
         internal StanConnectRequestTimeoutException() : base("Connection Request Timed out.") { }
     }
 
+    /// <summary>
+    /// An exception representing the case when a connection cannot be established
+    /// with the NATS streaming server.
+    /// </summary>
     public class StanConnectionException : StanException
     {
         internal StanConnectionException() : base("Invalid connection.") { }
         internal StanConnectionException(Exception e) : base("Invalid connection.", e) { }
     }
 
+    /// <summary>
+    /// An exception representing the case when the application attempts 
+    /// to manually acknowledge a message while the subscriber is configured
+    /// to automatically acknowledge messages.
+    /// </summary>
     public class StanManualAckException : StanException
     {
         internal StanManualAckException() : base("Cannot manually ack in auto-ack mode.") { }
         internal StanManualAckException(Exception e) : base("Cannot manually ack in auto-ack mode.", e) { }
     }
-
-    public class STANNullMessageException : StanException
-    {
-        internal STANNullMessageException() : base("Null Message.") { }
-        internal STANNullMessageException(Exception e) : base("Null Message.", e) { }
-    }
-
-
 }

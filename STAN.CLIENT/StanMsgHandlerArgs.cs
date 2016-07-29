@@ -7,6 +7,9 @@ using System;
 
 namespace STAN.Client
 {
+    /// <summary>
+    /// Arguments passed to the StanMsgHandler.
+    /// </summary>
     public class StanMsgHandlerArgs : EventArgs
     {
         StanMsg msg = null;
@@ -16,6 +19,9 @@ namespace STAN.Client
             msg = m;
         }
 
+        /// <summary>
+        /// The received message.
+        /// </summary>
         public StanMsg Message
         {
             get

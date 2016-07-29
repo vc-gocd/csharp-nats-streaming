@@ -9,6 +9,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using NATS.Client;
 
 namespace STAN.Client.UnitTests
 {
@@ -58,7 +59,7 @@ namespace STAN.Client.UnitTests
         {
             using (new NatsStreamingServer())
             {
-                using (NATS.Client.IConnection nc = new NATS.Client.ConnectionFactory().CreateConnection())
+                using (IConnection nc = new NATS.Client.ConnectionFactory().CreateConnection())
                 {
                     var opts = StanOptions.GetDefaultOptions();
                     opts.NatsConn = nc;
@@ -713,7 +714,7 @@ namespace STAN.Client.UnitTests
             using (new NatsStreamingServer())
             {
                 var cOpts = StanOptions.GetDefaultOptions();
-                cOpts.AckTimeout = 50;
+                cOpts.PubAckWait = 50;
                 using (var c = new StanConnectionFactory().CreateConnection(CLUSTER_ID, CLIENT_ID, cOpts))
                 {
                     AutoResetEvent ev = new AutoResetEvent(false);
@@ -1638,7 +1639,7 @@ namespace STAN.Client.UnitTests
                 using (var c = DefaultConnection)
                 {
                     var nc = c.NATSConnection;
-                    Assert.True(nc.State == NATS.Client.ConnState.CONNECTED);
+                    Assert.True(nc.State == ConnState.CONNECTED);
                     nc.Close();
 
                     Assert.True(nc.IsClosed());
@@ -1646,7 +1647,7 @@ namespace STAN.Client.UnitTests
                     Assert.True(c.NATSConnection == null);
                 }
 
-                var nc2 = new NATS.Client.ConnectionFactory().CreateConnection();
+                var nc2 = new ConnectionFactory().CreateConnection();
 
                 var opts = StanOptions.GetDefaultOptions();
                 opts.NatsConn = nc2;
@@ -1667,7 +1668,7 @@ namespace STAN.Client.UnitTests
             {
                 AutoResetEvent ev = new AutoResetEvent(false);
                 var opts = StanOptions.GetDefaultOptions();
-                opts.AckTimeout = 1100;
+                opts.PubAckWait = 1100;
                 opts.MaxPubAcksInFlight = 1;
 
                 using (var c = new StanConnectionFactory().CreateConnection(
