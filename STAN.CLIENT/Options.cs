@@ -3,20 +3,24 @@
  * materials are made available under the terms of the MIT License (MIT) which accompanies this
  * distribution, and is available at http://opensource.org/licenses/MIT
  *******************************************************************************/
- using System;
+using System;
+using NATS.Client;
 
 namespace STAN.Client
 {
-    public class Options
+    /// <summary>
+    /// Options available to configure a connection to the NATS streaming server.
+    /// </summary>
+    public sealed class StanOptions
     {
-        internal string natsURL = Consts.DefaultNatsURL;
-        internal NATS.Client.IConnection natsConn = null;
-        internal int connectTimeout = Consts.DefaultConnectWait;
-        internal long ackTimeout = Consts.DefaultConnectWait;
-        internal string discoverPrefix = Consts.DefaultDiscoverPrefix;
-        internal long maxPubAcksInflight = Consts.DefaultMaxPubAcksInflight;
+        internal string natsURL = StanConsts.DefaultNatsURL;
+        internal IConnection natsConn = null;
+        internal int connectTimeout = StanConsts.DefaultConnectWait;
+        internal long ackTimeout = StanConsts.DefaultConnectWait;
+        internal string discoverPrefix = StanConsts.DefaultDiscoverPrefix;
+        internal long maxPubAcksInflight = StanConsts.DefaultMaxPubAcksInflight;
 
-        internal Options() { }
+        internal StanOptions() { }
 
         private string deepCopy(string value)
         {
@@ -26,17 +30,20 @@ namespace STAN.Client
             return string.Copy(value);
         }
 
-        internal Options(Options options)
+        internal StanOptions(StanOptions options)
         {
-            this.ackTimeout = options.ackTimeout;
-            this.NatsURL = deepCopy(options.NatsURL);
-            this.ConnectTimeout = options.ConnectTimeout;
-            this.AckTimeout = options.AckTimeout;
-            this.DiscoverPrefix = deepCopy(options.DiscoverPrefix);
-            this.MaxPubAcksInFlight = options.MaxPubAcksInFlight;
-            this.NatsConn = options.NatsConn;
+            ackTimeout = options.ackTimeout;
+            NatsURL = deepCopy(options.NatsURL);
+            ConnectTimeout = options.ConnectTimeout;
+            PubAckWait = options.PubAckWait;
+            DiscoverPrefix = deepCopy(options.DiscoverPrefix);
+            MaxPubAcksInFlight = options.MaxPubAcksInFlight;
+            NatsConn = options.natsConn;
         }
 
+        /// <summary>
+        /// Gets or sets the url to connect to a NATS server.
+        /// </summary>
 	    public string NatsURL
         {
             get 
@@ -46,25 +53,27 @@ namespace STAN.Client
             set
             {
                 if (natsURL == null)
-                    natsURL = Consts.DefaultNatsURL;
+                    natsURL = StanConsts.DefaultNatsURL;
 
                 natsURL = value;
             }
         }
 
-        public NATS.Client.IConnection NatsConn
+        /// <summary>
+        /// Sets the underlying NATS connection to be used by a NATS Streaming 
+        /// connection object.
+        /// </summary>
+        public IConnection NatsConn
         {
-            get
-            {
-                return natsConn;
-            }
             set
             {
-                // allow null values for testing?
                 natsConn = value;
             }
         }
 
+        /// <summary>
+        /// ConnectTimeout is an Option to set the timeout for establishing a connection.
+        /// </summary>
         public int ConnectTimeout
         {
             get
@@ -80,7 +89,11 @@ namespace STAN.Client
             }
         }
 
-        public long AckTimeout
+        /// <summary>
+        /// PubAckWait is an option to set the timeout for waiting for an ACK 
+        /// for a published message.  The value must be greater than zero.
+        /// </summary>
+        public long PubAckWait
         {
             get
             {
@@ -95,6 +108,10 @@ namespace STAN.Client
             }
         }
 
+        /// <summary>
+        /// Sets the discover prefix used in connecting to the NATS streaming server.
+        /// This must match the settings on the NATS streaming sever.
+        /// </summary>
         public string DiscoverPrefix
         {
             get
@@ -110,6 +127,10 @@ namespace STAN.Client
             }
         }
 
+        /// <summary>
+        /// MaxPubAcksInflight is an Option to set the maximum number 
+        /// of published  messages without outstanding ACKs from the server.
+        /// </summary>
         public long MaxPubAcksInFlight
         {
             get
@@ -123,6 +144,15 @@ namespace STAN.Client
 
                 maxPubAcksInflight = value;
             }
+        }
+
+        /// <summary>
+        /// Returns the default connection options.
+        /// </summary>
+        /// <returns></returns>
+        public static StanOptions GetDefaultOptions()
+        {
+            return new StanOptions();
         }
     }
 }

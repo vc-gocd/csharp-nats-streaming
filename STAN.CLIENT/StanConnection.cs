@@ -6,6 +6,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using NATS.Client;
+
+// disable XML comment warnings
+#pragma warning disable 1591
 
 namespace STAN.Client
 {
@@ -103,36 +107,36 @@ namespace STAN.Client
         private readonly string closeRequests; // Subject to send close requests.
         private readonly string ackSubject; // publish acks
 
-        private NATS.Client.ISubscription ackSubscription;
-        private NATS.Client.ISubscription hbSubscription;
+        private ISubscription ackSubscription;
+        private ISubscription hbSubscription;
 
         private IDictionary<string, AsyncSubscription> subMap = new Dictionary<string, AsyncSubscription>();
         private BlockingDictionary<string, PublishAck> pubAckMap;
 
         internal ProtocolSerializer ps = new ProtocolSerializer();
         
-        private Options opts = null;
+        private StanOptions opts = null;
 
-	    private NATS.Client.IConnection  nc;
+	    private IConnection  nc;
         private bool ncOwned = false;
 
         private Connection() { }
         
-        internal Connection(string stanClusterID, string clientID, Options options)
+        internal Connection(string stanClusterID, string clientID, StanOptions options)
         {
             this.clientID = clientID;
 
             if (options != null)
-                this.opts = new Options(options);
+                opts = new StanOptions(options);
             else
-                this.opts = new Options();
+                opts = new StanOptions();
 
-            if (opts.NatsConn == null)
+            if (opts.natsConn == null)
             {
                 ncOwned = true;
                 try
                 {
-                    nc = new NATS.Client.ConnectionFactory().CreateConnection(opts.NatsURL);
+                    nc = new ConnectionFactory().CreateConnection(opts.NatsURL);
                 }
                 catch (Exception ex)
                 {
@@ -141,8 +145,8 @@ namespace STAN.Client
             }
             else
             {
-                nc = opts.NatsConn;
-                this.ncOwned = false;
+                nc = opts.natsConn;
+                ncOwned = false;
             }
 
             // create a heartbeat inbox
@@ -155,14 +159,14 @@ namespace STAN.Client
             req.ClientID = this.clientID;
             req.HeartbeatInbox = hbInbox;
 
-            NATS.Client.Msg cr;
+            Msg cr;
             try
             {
                 cr = nc.Request(discoverSubject, 
                     ProtocolSerializer.marshal(req),
                     opts.ConnectTimeout);
             }
-            catch (NATS.Client.NATSTimeoutException)
+            catch (NATSTimeoutException)
             {
                 throw new StanConnectRequestTimeoutException();
             }
@@ -189,7 +193,7 @@ namespace STAN.Client
             closeRequests = response.CloseRequests;
 
             // setup the Ack subscription
-            ackSubject = Consts.DefaultACKPrefix + "." + newGUID();
+            ackSubject = StanConsts.DefaultACKPrefix + "." + newGUID();
             ackSubscription = nc.SubscribeAsync(ackSubject, processAck);
 
             // TODO:  hardcode or options?
@@ -198,9 +202,9 @@ namespace STAN.Client
             pubAckMap = new BlockingDictionary<string, PublishAck>(opts.maxPubAcksInflight);
         }
 
-        private void processHeartBeat(object sender, NATS.Client.MsgHandlerEventArgs args)
+        private void processHeartBeat(object sender, MsgHandlerEventArgs args)
         {
-            NATS.Client.IConnection lnc;
+            IConnection lnc;
 
             lock (mu)
             {
@@ -221,7 +225,7 @@ namespace STAN.Client
             return a;
         }
 
-        public NATS.Client.IConnection NATSConnection
+        public IConnection NATSConnection
         {
             get
             {
@@ -232,7 +236,7 @@ namespace STAN.Client
             }
         }
 
-        private void processAck(object sender, NATS.Client.MsgHandlerEventArgs args)
+        private void processAck(object sender, MsgHandlerEventArgs args)
         {
             PubAck pa = new PubAck();
             try
@@ -251,11 +255,11 @@ namespace STAN.Client
                 a.invokeHandler(pa.Guid, pa.Error);
         }
 
-        internal void processMsg(object sender, NATS.Client.MsgHandlerEventArgs args)
+        internal void processMsg(object sender, MsgHandlerEventArgs args)
         {
             bool isClosed = false;
             AsyncSubscription sub = null;
-            NATS.Client.Msg raw = null;
+            Msg raw = null;
 
             MsgProto mp = new MsgProto();
             ProtocolSerializer.unmarshal(args.Message.Data, mp);
@@ -287,7 +291,7 @@ namespace STAN.Client
 
         static public string newGUID()
         {
-            return NATS.Client.NUID.NextGlobal;
+            return NUID.NextGlobal;
         }
 
         public void Publish(string subject, byte[] data)
@@ -316,7 +320,7 @@ namespace STAN.Client
             byte[] b = ProtocolSerializer.createPubMsg(clientID, guidValue, subject,
                 reply == null ? "" : reply, data);
 
-            PublishAck a = new PublishAck(this, guidValue, handler, opts.AckTimeout);
+            PublishAck a = new PublishAck(this, guidValue, handler, opts.PubAckWait);
 
             lock (mu)
             {
@@ -357,7 +361,7 @@ namespace STAN.Client
             return a;
         }
 
-        private IStanSubscription subscribe(string subject, string qgroup, EventHandler<StanMsgHandlerArgs> handler, SubscriptionOptions options)
+        private IStanSubscription subscribe(string subject, string qgroup, EventHandler<StanMsgHandlerArgs> handler, StanSubscriptionOptions options)
         {
             AsyncSubscription sub = new AsyncSubscription(this, options);
 
@@ -370,7 +374,7 @@ namespace STAN.Client
 
                 // Register the subscription
                 subMap[sub.Inbox] = sub;
-                NATS.Client.IConnection localNc = nc;
+                IConnection localNc = nc;
             }
 
             try
@@ -388,7 +392,7 @@ namespace STAN.Client
 
         internal void unsubscribe(string subject, string ackInbox)
         {
-            NATS.Client.IConnection lnc;
+            IConnection lnc;
 
             lock (mu)
             {
@@ -412,7 +416,7 @@ namespace STAN.Client
 
         /// <summary>
         /// Publish will publish to the cluster and asynchronously
-        //  process the ACK or error state. It will return the GUID for the message being sent.
+        /// process the ACK or error state. It will return the GUID for the message being sent.
         /// </summary>
         /// <param name="subject"></param>
         /// <param name="reply"></param>
@@ -436,7 +440,7 @@ namespace STAN.Client
             return Subscribe(subject, AsyncSubscription.DefaultOptions, handler);
         }
 
-        public IStanSubscription Subscribe(string subject, SubscriptionOptions options, EventHandler<StanMsgHandlerArgs> handler)
+        public IStanSubscription Subscribe(string subject, StanSubscriptionOptions options, EventHandler<StanMsgHandlerArgs> handler)
         {
             if (subject == null)
                 throw new ArgumentException("cannot be null", "subject");
@@ -453,7 +457,7 @@ namespace STAN.Client
             return Subscribe(subject, qgroup, AsyncSubscription.DefaultOptions, handler);
         }
 
-        public IStanSubscription Subscribe(string subject, string qgroup, SubscriptionOptions options, EventHandler<StanMsgHandlerArgs> handler)
+        public IStanSubscription Subscribe(string subject, string qgroup, StanSubscriptionOptions options, EventHandler<StanMsgHandlerArgs> handler)
         {
             if (subject == null)
                 throw new ArgumentException("cannot be null", "subject");
@@ -469,12 +473,12 @@ namespace STAN.Client
 
         public void Close()
         {
-            NATS.Client.Msg reply = null;
+            Msg reply = null;
 
             lock (mu)
             {
 
-                NATS.Client.IConnection lnc = nc;
+                IConnection lnc = nc;
                 nc = null;
 
                 if (lnc == null)

@@ -8,21 +8,24 @@ using System;
 namespace STAN.Client
 {
     /// <summary>
-    /// Subscription options 
+    /// The StanSubsciption options class represents various options available
+    /// to configure a subscription to a subject on the NATS streaming server.
     /// </summary>
-    public class SubscriptionOptions
+    public class StanSubscriptionOptions
     {
         internal string durableName = null;
-        internal int maxInFlight = Consts.DefaultMaxInflight;
+        internal int maxInFlight = StanConsts.DefaultMaxInflight;
         internal int ackWait = 30000;
         internal StartPosition startAt = StartPosition.NewOnly;
         internal ulong startSequence = 0;
         internal DateTime startTime;
+        internal bool useStartTimeDelta = false;
+        internal TimeSpan startTimeDelta;
         internal bool manualAcks = false;
 
-        internal SubscriptionOptions() { }
+        internal StanSubscriptionOptions() { }
 
-        internal SubscriptionOptions(SubscriptionOptions opts)
+        internal StanSubscriptionOptions(StanSubscriptionOptions opts)
         {
             if (opts == null)
                 return;
@@ -38,10 +41,16 @@ namespace STAN.Client
             maxInFlight = opts.maxInFlight;
             startAt = opts.startAt;
             startSequence = opts.startSequence;
+            useStartTimeDelta = opts.useStartTimeDelta;
 
             if (opts.startTime != null)
             {
-                this.startTime = opts.startTime;
+                startTime = opts.startTime;
+            }
+
+            if (opts.startTimeDelta != null)
+            {
+                startTimeDelta = opts.startTimeDelta;
             }
         }
 
@@ -101,7 +110,7 @@ namespace STAN.Client
         /// Optional start sequence number.
         /// </summary>
         /// <param name="sequence"></param>
-	    public void StartAtSequence(ulong sequence)
+	    public void StartAt(ulong sequence)
         {
             startAt = StartPosition.SequenceStart;
             startSequence = sequence;    
@@ -111,9 +120,21 @@ namespace STAN.Client
         /// Optional start time.
         /// </summary>
         /// <param name="time"></param>
-	    public void StartAtTime(DateTime time)
+	    public void StartAt(DateTime time)
         {
+            useStartTimeDelta = false;
             startTime = time;
+            startAt = StartPosition.TimeDeltaStart;
+        }
+
+        /// <summary>
+        /// Optional start at time delta.
+        /// </summary>
+        /// <param name="duration"></param>
+        public void StartAt(TimeSpan duration)
+        {
+            useStartTimeDelta = true;
+            startTimeDelta = duration;
             startAt = StartPosition.TimeDeltaStart;
         }
 
@@ -131,6 +152,15 @@ namespace STAN.Client
         public void DeliverAllAvailable()
         {
             startAt = StartPosition.First;
+        }
+
+        /// <summary>
+        /// Returns a copy of the default subscription options.
+        /// </summary>
+        /// <returns></returns>
+        public static StanSubscriptionOptions GetDefaultOptions()
+        {
+            return new StanSubscriptionOptions();
         }
     }
 }

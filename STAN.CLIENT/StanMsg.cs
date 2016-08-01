@@ -8,17 +8,17 @@ using System;
 namespace STAN.Client
 {
     /// <summary>
-    /// A received NATS streaming message.
+    /// A StanMsg object is a received NATS streaming message.
     /// </summary>
-    public class StanMsg
+    public sealed class StanMsg
     {
         internal MsgProto proto;
         private  AsyncSubscription sub;
 
         internal StanMsg(MsgProto p, AsyncSubscription s)
         {
-            this.proto = p;
-            this.sub = s;
+            proto = p;
+            sub = s;
         }
 
         /// <summary>
@@ -57,6 +57,9 @@ namespace STAN.Client
             sub.manualAck(this);
         }
 
+        /// <summary>
+        /// Gets the sequence number of a message.
+        /// </summary>
         public ulong Sequence
         {
             get
@@ -65,6 +68,9 @@ namespace STAN.Client
             }
         }
 
+        /// <summary>
+        /// Gets the subject of the message.
+        /// </summary>
         public string Subject
         {
             get
@@ -73,6 +79,9 @@ namespace STAN.Client
             }
         }
 
+        /// <summary>
+        /// Get the data field (payload) of a message.
+        /// </summary>
         public byte[] Data
         {
             get

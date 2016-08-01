@@ -7,8 +7,14 @@ using System;
 
 namespace STAN.Client
 {
+    /// <summary>
+    /// Subscription represents a subscription within the NATS Streaming cluster. Subscriptions will be rate matched and follow at-least delivery semantics.
+    /// </summary>
     public interface IStanSubscription : IDisposable
     {
+        /// <summary>
+        /// Removes interest in the given subject.
+        /// </summary>
         void Unsubscribe();
     }
 }
