@@ -13,7 +13,8 @@ NATS Streaming provides the following high-level feature set:
 
 ## Alpha Release
 
-Currently this client is in Alpha release, and is the absolute minimal API required to function, paralleling the go NATS streaming client.  Additional .NET APIs are planned *very soon*, before the first release, specifically around using asych/await and asynchronous publishing. Comments are welcome! While .NET 6 has some wonderful features, I'm aiming for 4.52 code compatibility at the moment.
+Currently this client is in Alpha release, and is the absolute minimal API required to function, paralleling the go NATS streaming client.
+Comments are welcome! While .NET 6 has some wonderful features, I'm aiming for 4.52 code compatibility at the moment.
 
 ## Notes
 
@@ -151,6 +152,22 @@ The basic publish API (`Publish(subject, payload)`) is synchronous; it does not 
 
 Advanced users may wish to process these publish acknowledgements manually to achieve higher publish throughput by not waiting on individual acknowledgements during the publish operation. An asynchronous publish API is provided for this purpose:
 
+The NATS streaming .NET client supports async/await usage with a publisher.  The task returned to await upon contains
+the GUID of the published message.  The publish API will still block when the maximum outstanding acknowledgements has been
+reached to allow flow control in your application.
+
+```csharp
+// all in one call.
+var guid = await c.PublishAsync("foo", null);
+
+// alternatively, one can work in some application code.
+var t = c.PublishAsync("foo", null);
+// application code
+guid = await t;
+```
+
+A more traditional method is provided as well (an event handler).
+
 ```csharp
 var cf = new StanConnectionFactory();
 var c = cf.CreateConnection("test-cluster", "client-123");
@@ -250,9 +267,7 @@ var s = c.Subscribe("foo", sOpts, (obj, args) =>
 ```
 
 ## TODO
-
-[ ] Async/Await for asynchronous publish API.
-[ ] CI (Appveyor)
+-[ ] CI (Appveyor)
 
 ## License
 

@@ -4,6 +4,7 @@
  * distribution, and is available at http://opensource.org/licenses/MIT
  *******************************************************************************/
 using System;
+using System.Threading.Tasks;
 
 namespace STAN.Client
 {
@@ -16,7 +17,7 @@ namespace STAN.Client
         /// <summary>
         /// Publish publishes the data argument to the given subject. The data
         /// argument is left untouched and needs to be correctly interpreted on
-        /// the receiver.  This API is synchronous and waits for the acknoledgement
+        /// the receiver.  This API is synchronous and waits for the acknowledgement
         /// or error from the NATS streaming server.
         /// </summary>
         /// <param name="subject">Subject to publish the message to.</param>
@@ -27,7 +28,7 @@ namespace STAN.Client
         /// <summary>
         /// Publish publishes the data argument to the given subject. The data
         /// argument is left untouched and needs to be correctly interpreted on
-        /// the receiver.  This API is synchronous and waits for the acknoledgement
+        /// the receiver.  This API is synchronous and waits for the acknowledgement
         /// or error from the NATS streaming server.  An exception is thrown when
         /// an error occurs.
         /// </summary>
@@ -40,9 +41,9 @@ namespace STAN.Client
         /// <summary>
         /// Publish publishes the data argument to the given subject. The data
         /// argument is left untouched and needs to be correctly interpreted on
-        /// the receiver.  This API is asynchronous and handles the acknoledgement
+        /// the receiver.  This API is asynchronous and handles the acknowledgement
         /// or error from the NATS streaming server in the provided handler.  An exception is thrown when
-        /// an error occurs during the send, the handler will process acknowledgents and errors.
+        /// an error occurs during the send, the handler will process acknowledgments and errors.
         /// </summary>
         /// <param name="subject">Subject to publish the message to.</param>
         /// <param name="data">Message payload.</param>
@@ -54,7 +55,7 @@ namespace STAN.Client
         /// <summary>
         /// Publish publishes the data argument to the given subject. The data
         /// argument is left untouched and needs to be correctly interpreted on
-        /// the receiver.  This API is asynchronous and handles the acknoledgement
+        /// the receiver.  This API is asynchronous in nature handling the acknowledgement
         /// or error from the NATS streaming server in the provided handler.  An exception is thrown when
         /// an error occurs during the send, the handler will process acknowledgents and errors.
         /// </summary>
@@ -67,7 +68,31 @@ namespace STAN.Client
         string Publish(string subject, string reply, byte[] data, EventHandler<StanAckHandlerArgs> handler);
 
         /// <summary>
-        /// Subscribe will create an Asyncrounous Subscriber with
+        /// Publish publishes the data argument to the given subject. The data
+        /// argument is left untouched and needs to be correctly interpreted on
+        /// the receiver.  This API is asynchronous and handles the acknowledgement
+        /// or error from the NATS streaming server in the provided handler.  An exception is thrown when
+        /// an error occurs during the send, the handler will process acknowledgments and errors.
+        /// </summary>
+        /// <param name="subject">Subject to publish the message to.</param>
+        /// <param name="data"></param>
+        /// <returns>The task object representing the asynchronous operation, containing the guid.</returns>
+        Task<string> PublishAsync(string subject, byte[] data);
+
+        /// <summary>
+        /// Publish publishes the data argument to the given subject. The data
+        /// argument is left untouched and needs to be correctly interpreted on
+        /// the receiver.  This API is asynchronous and handles the acknowledgement
+        /// or error from the NATS streaming server in the provided handler.  An exception is thrown when
+        /// an error occurs during the send, the handler will process acknowledgments and errors.
+        /// </summary>
+        /// <param name="subject">Subject to publish the message to.</param>
+        /// <param name="data"></param>
+        /// <returns>The task object representing the asynchronous operation, containing the guid.</returns>
+        Task<string> PublishAsync(string subject, string reply, byte[] data);
+
+        /// <summary>
+        /// Subscribe will create an Asynchronous Subscriber with
         /// interest in a given subject, assign the handler, and immediately
         /// start receiving messages.  The subscriber will default options.
         /// </summary>
@@ -78,7 +103,7 @@ namespace STAN.Client
 	    IStanSubscription Subscribe(string subject, EventHandler<StanMsgHandlerArgs> handler);
 
         /// <summary>
-        /// Subscribe will create an Asyncronous subscriber with
+        /// Subscribe will create an Asynchronous subscriber with
         /// interest in a given subject, assign the handler, and immediately
         /// start receiving messages.
         /// </summary>
@@ -90,7 +115,7 @@ namespace STAN.Client
         IStanSubscription Subscribe(string subject, StanSubscriptionOptions options, EventHandler<StanMsgHandlerArgs> handler);
 
         /// <summary>
-        /// Subscribe will create an Asyncronous Subscriber with
+        /// Subscribe will create an Asynchronous Subscriber with
         /// interest in a given subject, assign the handler, and immediately
         /// start receiving messages.  The subscriber will use default 
         /// subscriber options.
@@ -102,7 +127,7 @@ namespace STAN.Client
         IStanSubscription Subscribe(string subject, string qgroup, EventHandler<StanMsgHandlerArgs> handler);
 
         /// <summary>
-        /// Subscribe will create an Asyncronous Subscriber with
+        /// Subscribe will create an Asynchronous Subscriber with
         /// interest in a given subject, assign the handler, and immediately
         /// start receiving messages.
         /// </summary>
