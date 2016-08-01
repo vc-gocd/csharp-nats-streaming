@@ -3,6 +3,7 @@
 NATS Streaming is an extremely performant, lightweight reliable streaming platform powered by [NATS](https://nats.io).
 
 [![License MIT](https://img.shields.io/npm/l/express.svg)](http://opensource.org/licenses/MIT)
+[![API Documentation](https://img.shields.io/badge/doc-Doxygen-brightgreen.svg?style=flat)](http://nats-io.github.io/csharp-nats-streaming)
 
 NATS Streaming provides the following high-level feature set:
 - Log based persistence
@@ -17,7 +18,6 @@ Currently this client is in Alpha release, and is the absolute minimal API requi
 Comments are welcome! While .NET 6 has some wonderful features, I'm aiming for 4.52 code compatibility at the moment.
 
 ## Notes
-- API Documentation can be found [here](https://nats-io.github.io/csharp-nats-streaming/).
 - Please raise questions/issues via the [Issue Tracker](https://github.com/nats-io/csharp-nats-streaming/issues) or via natsio.slack.com (contact larry@apcera.com or brian@apcera.com for access)
 
 ## Known Issues
@@ -30,6 +30,20 @@ The NATS streaming .NET client can be installed manually by downloading the sour
 From the directory the repository has been cloned into, either invoke `build.bat` from the command line, or open the `STAN.sln` project file in Visual Studio and build from there.
 
 NuGet packages will be coming soon.
+
+### API Documentation
+
+[Current API Documentation](http://nats-io.github.io/csharp-nats-streaming)
+
+Doxygen is used for building the API documentation.  To build the API documentation, change directories to `doc` and run the following command:
+
+```
+build_doc.bat
+```
+
+Doxygen will build the NATS .NET Streaming Client API documentation, placing it in the `doc\STAN.Client\html` directory.
+Doxygen is required to be installed and in the PATH.  Version 1.8 is known to work.
+
 
 ## Basic Usage
 
