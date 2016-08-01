@@ -9,6 +9,31 @@ using System.Threading;
 using NATS.Client;
 using System.Threading.Tasks;
 
+/*! \mainpage %NATS .NET Streaming Client.
+ *
+ * \section intro_sec Introduction
+ *
+ * The %NATS .NET Streaming Client is part of %NATS an open-source, cloud-native
+ * messaging system, and is supported by [Apcera](http://www.apcera.com).
+ * This client, written in C#, follows the go client closely, but
+ * diverges in places to follow the common design semantics of a .NET API.
+ *
+ * \section install_sec Installation
+ *
+ * Instructions to build and install the %NATS .NET C# Streaming Client can be
+ * found at the [NATS .NET C# Streaming Client GitHub page](https://github.com/nats-io/csharp-nats-streaming)
+ *
+ * \section other_doc_section Other Documentation
+ *
+ * This documentation focuses on the %NATS .NET C# Streaming Client API; for additional
+ * information, refer to the following:
+ *
+ * - [General Documentation for nats.io](http://nats.io/documentation)
+ * - [NATS .NET C# Streaming Client found on GitHub](https://github.com/nats-io/csharp-nats-streaming)
+ * - [NATS .NET C# Client found on GitHub](https://github.com/nats-io/csnats)
+ * - [The NATS server (gnatsd) found on GitHub](https://github.com/nats-io/gnatsd)
+ */
+
 // disable XML comment warnings
 #pragma warning disable 1591
 
