@@ -251,8 +251,8 @@ var s = c.Subscribe("foo", sOpts, (obj, args) =>
 
 ## TODO
 
-[ ] Async/Await for asynchronous publish API.
-[ ] CI (Appveyor)
+- [ ] Async/Await for asynchronous publish API.
+- [ ] CI (Appveyor)
 
 ## License
 
