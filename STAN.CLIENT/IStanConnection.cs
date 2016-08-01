@@ -87,6 +87,7 @@ namespace STAN.Client
         /// an error occurs during the send, the handler will process acknowledgments and errors.
         /// </summary>
         /// <param name="subject">Subject to publish the message to.</param>
+        /// <param name="reply">Subject the receiver can reply on.</param>
         /// <param name="data"></param>
         /// <returns>The task object representing the asynchronous operation, containing the guid.</returns>
         Task<string> PublishAsync(string subject, string reply, byte[] data);

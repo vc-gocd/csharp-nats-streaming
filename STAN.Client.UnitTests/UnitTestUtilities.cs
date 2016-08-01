@@ -89,7 +89,7 @@ namespace STAN.Client.UnitTests
 
         private ProcessStartInfo createProcessStartInfo()
         {
-            string nss = "nats-streaming-server";
+            string nss = "nats-streaming-server.exe";
             ProcessStartInfo psInfo = new ProcessStartInfo(nss);
 
             if (debug)
