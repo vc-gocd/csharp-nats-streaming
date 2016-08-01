@@ -268,6 +268,7 @@ var s = c.Subscribe("foo", sOpts, (obj, args) =>
 
 ## TODO
 - [ ] CI (Appveyor)
+- [ ] Robust Benchmark Application
 
 ## License
 
