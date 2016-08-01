@@ -267,7 +267,7 @@ var s = c.Subscribe("foo", sOpts, (obj, args) =>
 ```
 
 ## TODO
--[ ] CI (Appveyor)
+- [ ] CI (Appveyor)
 
 ## License
 
