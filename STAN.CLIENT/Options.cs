@@ -67,9 +67,6 @@ namespace STAN.Client
         {
             set
             {
-                if (value == null)
-                    throw new ArgumentNullException("value cannot be null");
-
                 natsConn = value;
             }
         }

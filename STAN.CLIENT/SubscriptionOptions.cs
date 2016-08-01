@@ -110,7 +110,7 @@ namespace STAN.Client
         /// Optional start sequence number.
         /// </summary>
         /// <param name="sequence"></param>
-	    public void StartAtSequence(ulong sequence)
+	    public void StartAt(ulong sequence)
         {
             startAt = StartPosition.SequenceStart;
             startSequence = sequence;    
@@ -120,7 +120,7 @@ namespace STAN.Client
         /// Optional start time.
         /// </summary>
         /// <param name="time"></param>
-	    public void StartAtTime(DateTime time)
+	    public void StartAt(DateTime time)
         {
             useStartTimeDelta = false;
             startTime = time;
@@ -131,7 +131,7 @@ namespace STAN.Client
         /// Optional start at time delta.
         /// </summary>
         /// <param name="duration"></param>
-        public void StartAtTimeDelta(TimeSpan duration)
+        public void StartAt(TimeSpan duration)
         {
             useStartTimeDelta = true;
             startTimeDelta = duration;

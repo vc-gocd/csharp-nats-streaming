@@ -59,7 +59,7 @@ namespace STAN.Client.UnitTests
         {
             using (new NatsStreamingServer())
             {
-                using (IConnection nc = new NATS.Client.ConnectionFactory().CreateConnection())
+                using (IConnection nc = new ConnectionFactory().CreateConnection())
                 {
                     var opts = StanOptions.GetDefaultOptions();
                     opts.NatsConn = nc;
@@ -438,11 +438,11 @@ namespace STAN.Client.UnitTests
                     };
 
                     var sOpts = StanSubscriptionOptions.GetDefaultOptions();
-                    sOpts.StartAtSequence(500);
+                    sOpts.StartAt(500);
 
                     Assert.Throws<StanException>(() => (c.Subscribe("foo", sOpts, eh)));
 
-                    sOpts.StartAtSequence(6);
+                    sOpts.StartAt(6);
                     c.Subscribe("foo", sOpts, eh);
 
                     Assert.True(ev.WaitOne(DEFAULT_WAIT));
@@ -506,10 +506,10 @@ namespace STAN.Client.UnitTests
                     Thread.Sleep(500);
 
                     var sOpts = StanSubscriptionOptions.GetDefaultOptions();
-                    sOpts.StartAtTime(DateTime.Now);
+                    sOpts.StartAt(DateTime.Now);
                     Assert.Throws<StanException>(() => (c.Subscribe("foo", sOpts, eh)));
 
-                    sOpts.StartAtTime(startTime);
+                    sOpts.StartAt(startTime);
                     c.Subscribe("foo", sOpts, eh);
 
                     Assert.True(ev.WaitOne(DEFAULT_WAIT*20));
@@ -574,7 +574,7 @@ namespace STAN.Client.UnitTests
                     Thread.Sleep(500);
 
                     var sOpts = StanSubscriptionOptions.GetDefaultOptions();
-                    sOpts.StartAtTimeDelta(DateTime.Now - startTime);
+                    sOpts.StartAt(DateTime.Now - startTime);
                     c.Subscribe("foo", sOpts, eh);
 
                     Assert.True(ev.WaitOne(DEFAULT_WAIT * 20));
@@ -604,10 +604,10 @@ namespace STAN.Client.UnitTests
                 {
                     var opts = StanSubscriptionOptions.GetDefaultOptions();
 
-                    opts.StartAtTime(DateTime.Now);
+                    opts.StartAt(DateTime.Now);
                     Assert.Throws<StanException>(() => c.Subscribe("foo", opts, noopMh));
 
-                    opts.StartAtSequence(0);
+                    opts.StartAt(0);
                     Assert.Throws<StanException>(() => c.Subscribe("foo", opts, noopMh));
 
 

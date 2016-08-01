@@ -151,7 +151,7 @@ Subscription Options:
 
             if (parsedArgs.ContainsKey("-seq"))
             {
-                sOpts.StartAtSequence(Convert.ToUInt64(parsedArgs["-seq"]));
+                sOpts.StartAt(Convert.ToUInt64(parsedArgs["-seq"]));
             }
 
             if (parsedArgs.ContainsKey("-all"))
@@ -170,7 +170,7 @@ Subscription Options:
             {
                 TimeSpan ts = TimeSpan.Parse(parsedArgs["-since"]);
                 Console.WriteLine("Request messages starting from {0} ago.", ts);
-                sOpts.StartAtTimeDelta(ts);
+                sOpts.StartAt(ts);
             }
 
             if (parsedArgs.ContainsKey("-durable"))
