@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using NATS.Client;
+using System.Threading.Tasks;
 
 // disable XML comment warnings
 #pragma warning disable 1591
@@ -301,16 +302,16 @@ namespace STAN.Client
 
         public string Publish(string subject, byte[] data, EventHandler<StanAckHandlerArgs> handler)
         {
-            return publishAsync(subject, null, data, handler).GUID;
+            return publish(subject, null, data, handler).GUID;
         }
 
         public void Publish(string subject, string reply, byte[] data)
         {
-            PublishAck a = publishAsync(subject, reply, data, null);
+            PublishAck a = publish(subject, reply, data, null);
             a.wait();
         }
 
-        internal PublishAck publishAsync(string subject, string reply, byte[] data, EventHandler<StanAckHandlerArgs> handler)
+        internal PublishAck publish(string subject, string reply, byte[] data, EventHandler<StanAckHandlerArgs> handler)
         {
             string localAckSubject = null;
             long localAckTimeout = 0;
@@ -359,6 +360,30 @@ namespace STAN.Client
             }
 
             return a;
+        }
+
+        public Task<string> PublishAsync(string subject, byte[] data)
+        {
+            PublishAck a = publish(subject, null, data, null);
+            Task<string> t = new Task<string>(() =>
+            {
+                a.wait();
+                return a.GUID;
+            });
+            t.Start();
+            return t;
+        }
+
+        public Task<string> PublishAsync(string subject, string reply, byte[] data)
+        {
+            PublishAck a = publish(subject, reply, data, null);
+            Task<string> t = new Task<string>(() =>
+            {
+                a.wait();
+                return a.GUID;
+            });
+            t.Start();
+            return t;
         }
 
         private IStanSubscription subscribe(string subject, string qgroup, EventHandler<StanMsgHandlerArgs> handler, StanSubscriptionOptions options)
@@ -425,15 +450,13 @@ namespace STAN.Client
         /// <returns></returns>
         public string Publish(string subject, string reply, byte[] data, EventHandler<StanAckHandlerArgs> handler)
         {
-            return publishAsync(subject, reply, data, handler).GUID;
+            return publish(subject, reply, data, handler).GUID;
         }
-
 
         internal static string newInbox() 
         {
             return "_INBOX." + newGUID();
         }
-
 
         public IStanSubscription Subscribe(string subject, EventHandler<StanMsgHandlerArgs> handler)
         {

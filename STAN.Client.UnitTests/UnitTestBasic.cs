@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using NATS.Client;
+using System.Diagnostics;
 
 namespace STAN.Client.UnitTests
 {
@@ -1688,6 +1689,75 @@ namespace STAN.Client.UnitTests
                     c.Publish("foo", null, (obj, args) => { });
                     DateTime endTime = DateTime.Now;
                     Assert.True((endTime - startTime).TotalMilliseconds > 1000);
+                }
+            }
+        }
+
+        private async void testAsyncPublishAPI()
+        {
+            using (new NatsStreamingServer())
+            {
+                using (var c = DefaultConnection)
+                {
+                    var guid = await c.PublishAsync("foo", null);
+                    Assert.False(string.IsNullOrWhiteSpace(guid));
+                }
+            }
+        }
+
+        [Fact]
+        public void TestAsyncPublishAPI()
+        {
+           testAsyncPublishAPI();
+        }
+
+        private async void testAsyncPublishAPIParallel()
+        {
+            using (var s = new NatsStreamingServer())
+            {
+                using (var c = DefaultConnection)
+                {
+                    // make sure it simply works without blocking.
+                    Stopwatch sw = Stopwatch.StartNew();
+                    Task<string> t = c.PublishAsync("foo", null);
+                    Thread.Sleep(500);
+                    sw.Stop();
+                    Assert.True(sw.ElapsedMilliseconds < 600);
+
+                    sw.Restart();
+                    var guid = await t;
+                    sw.Stop();
+                    Assert.False(sw.ElapsedMilliseconds > 100);
+                    Assert.False(string.IsNullOrWhiteSpace(guid));
+                }
+            }
+        }
+
+        [Fact]
+        public void TestAsyncPublishAPIParallel()
+        {
+            testAsyncPublishAPIParallel();
+        }
+
+        [Fact]
+        public void TestAsyncPublishAPIMultiple()
+        {
+            testAsyncPublishAPIMultiple();
+        }
+
+        private void testAsyncPublishAPIMultiple()
+        {
+            List<Task<string>> pubs = new List<Task<string>>();
+
+            using (new NatsStreamingServer())
+            {
+                using (var c = DefaultConnection)
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        pubs.Add(c.PublishAsync("foo", "bar", null));
+                    }
+                    Task.WaitAll(pubs.ToArray());
                 }
             }
         }
