@@ -93,9 +93,12 @@ namespace STAN.Client
                         }
                         else
                         {
-                            if (Monitor.Wait(dLock, timeout) == false)
+                            if (timeout > 0)
                             {
-                                throw new Exception("timeout");
+                                if (Monitor.Wait(dLock, timeout) == false)
+                                {
+                                    throw new Exception("timeout");
+                                }
                             }
                         }
                     }
