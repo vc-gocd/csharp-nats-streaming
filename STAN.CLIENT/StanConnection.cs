@@ -245,7 +245,7 @@ namespace STAN.Client
 
             lock (mu)
             {
-                pubAckMap.TryGetValue(guid, out a);
+                pubAckMap.TryGetValue(guid, out a, 0);
             }
 
             return a;
@@ -304,15 +304,6 @@ namespace STAN.Client
             StanMsg msg = new StanMsg(mp, sub);
 
             sub.processMsg(mp);
-        }
-
-        ~Connection()
-        {
-            try
-            {
-                Close();
-            }
-            catch (Exception) { }
         }
 
         static public string newGUID()
