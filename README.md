@@ -3,6 +3,7 @@
 NATS Streaming is an extremely performant, lightweight reliable streaming platform powered by [NATS](https://nats.io).
 
 [![License MIT](https://img.shields.io/npm/l/express.svg)](http://opensource.org/licenses/MIT)
+[![Build status](https://ci.appveyor.com/api/projects/status/55r49k0apwdh94s5?svg=true)](https://ci.appveyor.com/project/NATS-CI47222/csharp-nats-streaming)
 [![API Documentation](https://img.shields.io/badge/doc-Doxygen-brightgreen.svg?style=flat)](http://nats-io.github.io/csharp-nats-streaming)
 
 NATS Streaming provides the following high-level feature set:
