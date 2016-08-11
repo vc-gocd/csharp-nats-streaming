@@ -282,92 +282,6 @@ namespace STAN.Client.UnitTests
         }
 
         [Fact]
-        public void TestBasicPubSubWithReply()
-        {
-            byte[] hw = System.Text.Encoding.UTF8.GetBytes("Hello World");
-            var ev = new AutoResetEvent(false);
-            Exception ex = null;
-
-            using (new NatsStreamingServer())
-            {
-                using (var c = DefaultConnection)
-                {
-                    string inbox = c.NATSConnection.NewInbox();
-
-                    using (c.Subscribe("foo", (obj, args) =>
-                    {
-                        try
-                        {
-                            if (!"foo".Equals(args.Message.Sequence))
-                            {
-                                Assert.True("foo".Equals(args.Message.Subject),
-                                    string.Format("Expected subject of 'foo', got '{0}'.",
-                                    args.Message.Subject != null ? args.Message.Subject : "null"));
-                            }
-                            var str = System.Text.Encoding.UTF8.GetString(args.Message.Data);
-                            Assert.True("Hello World".Equals(str));
-                            Assert.True(inbox.Equals(inbox));
-                            ev.Set();
-                        }
-                        catch (Exception e)
-                        {
-                            ex = e;
-                        }
-                    }))
-                    {
-                        c.Publish("foo", inbox, hw);
-                        Assert.True(ev.WaitOne(DEFAULT_WAIT));
-                    }
-                }
-            }
-            if (ex != null)
-                throw ex;
-        }
-
-        [Fact]
-        public void TestAsyncPubSubWithReply()
-        {
-            byte[] hw = System.Text.Encoding.UTF8.GetBytes("Hello World");
-            var ev = new AutoResetEvent(false);
-            Exception ex = null;
-
-            using (new NatsStreamingServer())
-            {
-                using (var c = DefaultConnection)
-                {
-                    string inbox = c.NATSConnection.NewInbox();
-
-                    using (c.Subscribe("foo", (obj, args) =>
-                    {
-                        try
-                        {
-                            if (!"foo".Equals(args.Message.Sequence))
-                            {
-                                Assert.True("foo".Equals(args.Message.Subject),
-                                    string.Format("Expected subject of 'foo', got '{0}'.",
-                                    args.Message.Subject != null ? args.Message.Subject : "null"));
-                            }
-                            var str = System.Text.Encoding.UTF8.GetString(args.Message.Data);
-                            Assert.True("Hello World".Equals(str));
-                            Assert.True(inbox.Equals(inbox));
-                            ev.Set();
-                        }
-                        catch (Exception e)
-                        {
-                            ex = e;
-                        }
-                    }))
-                    {
-                        c.Publish("foo", inbox, hw, null);
-                        Assert.True(ev.WaitOne(DEFAULT_WAIT));
-                    }
-                }
-            }
-            if (ex != null)
-                throw ex;
-        }
-
-        [Fact]
         public void TestSubscriptionStartPositionLast()
         {
             int count = 10;
@@ -1755,7 +1669,7 @@ namespace STAN.Client.UnitTests
                 {
                     for (int i = 0; i < 10; i++)
                     {
-                        pubs.Add(c.PublishAsync("foo", "bar", null));
+                        pubs.Add(c.PublishAsync("foo", null));
                     }
                     Task.WaitAll(pubs.ToArray());
                 }
