@@ -28,19 +28,6 @@ namespace STAN.Client
         /// <summary>
         /// Publish publishes the data argument to the given subject. The data
         /// argument is left untouched and needs to be correctly interpreted on
-        /// the receiver.  This API is synchronous and waits for the acknowledgement
-        /// or error from the NATS streaming server.  An exception is thrown when
-        /// an error occurs.
-        /// </summary>
-        /// <param name="subject">Subject to publish the message to.</param>
-        /// <param name="reply">Subject the receiver can reply on.</param>
-        /// <param name="data">Message payload.</param>
-        /// <exception cref="StanException">When an error occurs locally or on the NATS streaming server.</exception>
-	    void Publish(string subject, string reply, byte[] data);
-
-        /// <summary>
-        /// Publish publishes the data argument to the given subject. The data
-        /// argument is left untouched and needs to be correctly interpreted on
         /// the receiver.  This API is asynchronous and handles the acknowledgement
         /// or error from the NATS streaming server in the provided handler.  An exception is thrown when
         /// an error occurs during the send, the handler will process acknowledgments and errors.
@@ -55,21 +42,6 @@ namespace STAN.Client
         /// <summary>
         /// Publish publishes the data argument to the given subject. The data
         /// argument is left untouched and needs to be correctly interpreted on
-        /// the receiver.  This API is asynchronous in nature handling the acknowledgement
-        /// or error from the NATS streaming server in the provided handler.  An exception is thrown when
-        /// an error occurs during the send, the handler will process acknowledgents and errors.
-        /// </summary>
-        /// <param name="subject">Subject to publish the message to.</param>
-        /// <param name="reply">Subject the receiver can reply on.</param>
-        /// <param name="data">Message payload.</param>
-        /// <param name="handler">Event handler to process message acknowledgements.</param>
-        /// <returns>The GUID of the published message.</returns>
-        /// <exception cref="StanException">Thrown when an error occurs publishing the message.</exception>
-        string Publish(string subject, string reply, byte[] data, EventHandler<StanAckHandlerArgs> handler);
-
-        /// <summary>
-        /// Publish publishes the data argument to the given subject. The data
-        /// argument is left untouched and needs to be correctly interpreted on
         /// the receiver.  This API is asynchronous and handles the acknowledgement
         /// or error from the NATS streaming server in the provided handler.  An exception is thrown when
         /// an error occurs during the send, the handler will process acknowledgments and errors.
@@ -78,19 +50,6 @@ namespace STAN.Client
         /// <param name="data"></param>
         /// <returns>The task object representing the asynchronous operation, containing the guid.</returns>
         Task<string> PublishAsync(string subject, byte[] data);
-
-        /// <summary>
-        /// Publish publishes the data argument to the given subject. The data
-        /// argument is left untouched and needs to be correctly interpreted on
-        /// the receiver.  This API is asynchronous and handles the acknowledgement
-        /// or error from the NATS streaming server in the provided handler.  An exception is thrown when
-        /// an error occurs during the send, the handler will process acknowledgments and errors.
-        /// </summary>
-        /// <param name="subject">Subject to publish the message to.</param>
-        /// <param name="reply">Subject the receiver can reply on.</param>
-        /// <param name="data"></param>
-        /// <returns>The task object representing the asynchronous operation, containing the guid.</returns>
-        Task<string> PublishAsync(string subject, string reply, byte[] data);
 
         /// <summary>
         /// Subscribe will create an Asynchronous Subscriber with

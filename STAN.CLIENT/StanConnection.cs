@@ -313,29 +313,22 @@ namespace STAN.Client
 
         public void Publish(string subject, byte[] data)
         {
-            Publish(subject, null, data);
+            publish(subject, data, null).wait();
         }
 
         public string Publish(string subject, byte[] data, EventHandler<StanAckHandlerArgs> handler)
         {
-            return publish(subject, null, data, handler).GUID;
+            return publish(subject, data, handler).GUID;
         }
 
-        public void Publish(string subject, string reply, byte[] data)
-        {
-            PublishAck a = publish(subject, reply, data, null);
-            a.wait();
-        }
-
-        internal PublishAck publish(string subject, string reply, byte[] data, EventHandler<StanAckHandlerArgs> handler)
+        internal PublishAck publish(string subject, byte[] data, EventHandler<StanAckHandlerArgs> handler)
         {
             string localAckSubject = null;
             long localAckTimeout = 0;
 
             string subj = this.pubPrefix + "." + subject;
             string guidValue = newGUID();
-            byte[] b = ProtocolSerializer.createPubMsg(clientID, guidValue, subject,
-                reply == null ? "" : reply, data);
+            byte[] b = ProtocolSerializer.createPubMsg(clientID, guidValue, subject, data);
 
             PublishAck a = new PublishAck(this, guidValue, handler, opts.PubAckWait);
 
@@ -380,19 +373,7 @@ namespace STAN.Client
 
         public Task<string> PublishAsync(string subject, byte[] data)
         {
-            PublishAck a = publish(subject, null, data, null);
-            Task<string> t = new Task<string>(() =>
-            {
-                a.wait();
-                return a.GUID;
-            });
-            t.Start();
-            return t;
-        }
-
-        public Task<string> PublishAsync(string subject, string reply, byte[] data)
-        {
-            PublishAck a = publish(subject, reply, data, null);
+            PublishAck a = publish(subject, data, null);
             Task<string> t = new Task<string>(() =>
             {
                 a.wait();
@@ -453,20 +434,6 @@ namespace STAN.Client
             ProtocolSerializer.unmarshal(r.Data, sr);
             if (!string.IsNullOrEmpty(sr.Error))
                 throw new StanException(sr.Error);
-        }
-
-        /// <summary>
-        /// Publish will publish to the cluster and asynchronously
-        /// process the ACK or error state. It will return the GUID for the message being sent.
-        /// </summary>
-        /// <param name="subject"></param>
-        /// <param name="reply"></param>
-        /// <param name="data"></param>
-        /// <param name="handler"></param>
-        /// <returns></returns>
-        public string Publish(string subject, string reply, byte[] data, EventHandler<StanAckHandlerArgs> handler)
-        {
-            return publish(subject, reply, data, handler).GUID;
         }
 
         internal static string newInbox() 
