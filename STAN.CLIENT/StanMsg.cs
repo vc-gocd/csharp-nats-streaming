@@ -39,7 +39,7 @@ namespace STAN.Client
         {
             get
             {
-                return new DateTime(1970, 1, 1, 0, 0, 0, 0).AddTicks(proto.Timestamp/100);
+                return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddTicks(proto.Timestamp/100);
             }
         }
 
