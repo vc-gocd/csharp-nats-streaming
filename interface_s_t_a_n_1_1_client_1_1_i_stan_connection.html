@@ -124,16 +124,10 @@ $(document).ready(function(){initNavTree('interface_s_t_a_n_1_1_client_1_1_i_sta
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ac0a3381bda7138815303172ff03da871"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_s_t_a_n_1_1_client_1_1_i_stan_connection.html#ac0a3381bda7138815303172ff03da871">Publish</a> (string subject, byte[] data)</td></tr>
 <tr class="separator:ac0a3381bda7138815303172ff03da871"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95573536d453ff04dc467d129d08528e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_s_t_a_n_1_1_client_1_1_i_stan_connection.html#a95573536d453ff04dc467d129d08528e">Publish</a> (string subject, string reply, byte[] data)</td></tr>
-<tr class="separator:a95573536d453ff04dc467d129d08528e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a833bb7560ae9fe7228db31810a746c"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_s_t_a_n_1_1_client_1_1_i_stan_connection.html#a3a833bb7560ae9fe7228db31810a746c">Publish</a> (string subject, byte[] data, EventHandler&lt; <a class="el" href="class_s_t_a_n_1_1_client_1_1_stan_ack_handler_args.html">StanAckHandlerArgs</a> &gt; handler)</td></tr>
 <tr class="separator:a3a833bb7560ae9fe7228db31810a746c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab07978a6b849b64ebf809ce541f56185"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_s_t_a_n_1_1_client_1_1_i_stan_connection.html#ab07978a6b849b64ebf809ce541f56185">Publish</a> (string subject, string reply, byte[] data, EventHandler&lt; <a class="el" href="class_s_t_a_n_1_1_client_1_1_stan_ack_handler_args.html">StanAckHandlerArgs</a> &gt; handler)</td></tr>
-<tr class="separator:ab07978a6b849b64ebf809ce541f56185"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a109cd42ac9814257dc1f6bbceae2e1f4"><td class="memItemLeft" align="right" valign="top">Task&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_s_t_a_n_1_1_client_1_1_i_stan_connection.html#a109cd42ac9814257dc1f6bbceae2e1f4">PublishAsync</a> (string subject, byte[] data)</td></tr>
 <tr class="separator:a109cd42ac9814257dc1f6bbceae2e1f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a190287811bf9287dd9547b8997d1cbc6"><td class="memItemLeft" align="right" valign="top">Task&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_s_t_a_n_1_1_client_1_1_i_stan_connection.html#a190287811bf9287dd9547b8997d1cbc6">PublishAsync</a> (string subject, string reply, byte[] data)</td></tr>
-<tr class="separator:a190287811bf9287dd9547b8997d1cbc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2317cda37f33f7c572fb18c1d8735c2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="interface_s_t_a_n_1_1_client_1_1_i_stan_subscription.html">IStanSubscription</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_s_t_a_n_1_1_client_1_1_i_stan_connection.html#aa2317cda37f33f7c572fb18c1d8735c2">Subscribe</a> (string subject, EventHandler&lt; <a class="el" href="class_s_t_a_n_1_1_client_1_1_stan_msg_handler_args.html">StanMsgHandlerArgs</a> &gt; handler)</td></tr>
 <tr class="separator:aa2317cda37f33f7c572fb18c1d8735c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac216692da889b12c6d770924c7863d64"><td class="memItemLeft" align="right" valign="top"><a class="el" href="interface_s_t_a_n_1_1_client_1_1_i_stan_subscription.html">IStanSubscription</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_s_t_a_n_1_1_client_1_1_i_stan_connection.html#ac216692da889b12c6d770924c7863d64">Subscribe</a> (string subject, <a class="el" href="class_s_t_a_n_1_1_client_1_1_stan_subscription_options.html">StanSubscriptionOptions</a> options, EventHandler&lt; <a class="el" href="class_s_t_a_n_1_1_client_1_1_stan_msg_handler_args.html">StanMsgHandlerArgs</a> &gt; handler)</td></tr>
@@ -217,54 +211,6 @@ Properties</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a95573536d453ff04dc467d129d08528e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void STAN.Client.IStanConnection.Publish </td>
-          <td>(</td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>subject</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>reply</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">byte[]&#160;</td>
-          <td class="paramname"><em>data</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Publish publishes the data argument to the given subject. The data argument is left untouched and needs to be correctly interpreted on the receiver. This API is synchronous and waits for the acknowledgement or error from the NATS streaming server. An exception is thrown when an error occurs. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">subject</td><td>Subject to publish the message to.</td></tr>
-    <tr><td class="paramname">reply</td><td>Subject the receiver can reply on.</td></tr>
-    <tr><td class="paramname">data</td><td>Message payload.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname"><a class="el" href="class_s_t_a_n_1_1_client_1_1_stan_exception.html" title="A general exception thrown by the NATS streaming server client. ">StanException</a></td><td>When an error occurs locally or on the NATS streaming server.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a class="anchor" id="a3a833bb7560ae9fe7228db31810a746c"></a>
 <div class="memitem">
 <div class="memproto">
@@ -314,62 +260,6 @@ Properties</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ab07978a6b849b64ebf809ce541f56185"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">string STAN.Client.IStanConnection.Publish </td>
-          <td>(</td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>subject</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>reply</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">byte[]&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">EventHandler&lt; <a class="el" href="class_s_t_a_n_1_1_client_1_1_stan_ack_handler_args.html">StanAckHandlerArgs</a> &gt;&#160;</td>
-          <td class="paramname"><em>handler</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Publish publishes the data argument to the given subject. The data argument is left untouched and needs to be correctly interpreted on the receiver. This API is asynchronous in nature handling the acknowledgement or error from the NATS streaming server in the provided handler. An exception is thrown when an error occurs during the send, the handler will process acknowledgents and errors. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">subject</td><td>Subject to publish the message to.</td></tr>
-    <tr><td class="paramname">reply</td><td>Subject the receiver can reply on.</td></tr>
-    <tr><td class="paramname">data</td><td>Message payload.</td></tr>
-    <tr><td class="paramname">handler</td><td>Event handler to process message acknowledgements.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The GUID of the published message.</dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname"><a class="el" href="class_s_t_a_n_1_1_client_1_1_stan_exception.html" title="A general exception thrown by the NATS streaming server client. ">StanException</a></td><td>Thrown when an error occurs publishing the message.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a class="anchor" id="a109cd42ac9814257dc1f6bbceae2e1f4"></a>
 <div class="memitem">
 <div class="memproto">
@@ -398,49 +288,6 @@ Properties</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">subject</td><td>Subject to publish the message to.</td></tr>
-    <tr><td class="paramname">data</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The task object representing the asynchronous operation, containing the guid.</dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a190287811bf9287dd9547b8997d1cbc6"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Task&lt;string&gt; STAN.Client.IStanConnection.PublishAsync </td>
-          <td>(</td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>subject</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>reply</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">byte[]&#160;</td>
-          <td class="paramname"><em>data</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Publish publishes the data argument to the given subject. The data argument is left untouched and needs to be correctly interpreted on the receiver. This API is asynchronous and handles the acknowledgement or error from the NATS streaming server in the provided handler. An exception is thrown when an error occurs during the send, the handler will process acknowledgments and errors. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">subject</td><td>Subject to publish the message to.</td></tr>
-    <tr><td class="paramname">reply</td><td>Subject the receiver can reply on.</td></tr>
     <tr><td class="paramname">data</td><td></td></tr>
   </table>
   </dd>
