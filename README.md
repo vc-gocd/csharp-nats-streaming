@@ -13,11 +13,6 @@ NATS Streaming provides the following high-level feature set:
 - Replay/Restart
 - Last Value Semantics
 
-## Alpha Release
-
-Currently this client is in Alpha release, and is the absolute minimal API required to function, paralleling the go NATS streaming client.
-Comments are welcome! While .NET 6 has some wonderful features, I'm aiming for 4.52 code compatibility at the moment.
-
 ## Notes
 - Please raise questions/issues via the [Issue Tracker](https://github.com/nats-io/csharp-nats-streaming/issues) or via natsio.slack.com (contact larry@apcera.com or brian@apcera.com for access)
 
