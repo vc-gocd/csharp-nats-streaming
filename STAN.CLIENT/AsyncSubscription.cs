@@ -44,15 +44,12 @@ namespace STAN.Client
         // in STAN, much of this code is in the connection module.
         internal void subscribe(string subRequestSubject, string subject, string qgroup, EventHandler<StanMsgHandlerArgs> handler)
         {
-            Exception exToThrow = null;
-
             rwLock.EnterWriteLock();
-
-            this.handler += handler;
-            this.subject = subject;
-
             try
             {
+                this.handler += handler;
+                this.subject = subject;
+
                 if (sc == null)
                 {
                     throw new StanConnectionClosedException();
@@ -100,19 +97,19 @@ namespace STAN.Client
 
                 ackInbox = r.AckInbox;
             }
-            catch (Exception ex)
+            catch
             {
                 if (inboxSub != null)
                 {
                     inboxSub.Unsubscribe();
                 }
-                exToThrow = ex;
+                
+                throw;
             }
-
-            rwLock.ExitWriteLock();
-
-            if (exToThrow != null)
-                throw exToThrow;
+            finally
+            {
+                rwLock.ExitWriteLock();
+            }
         }
 
         public void Unsubscribe()
