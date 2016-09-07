@@ -362,10 +362,10 @@ namespace STAN.Client
             {
                 nc.Publish(subj, localAckSubject, b);
             }
-            catch (Exception e)
+            catch
             {
                 removeAck(guidValue);
-                throw e;
+                throw;
             }
 
             return a;
@@ -403,10 +403,10 @@ namespace STAN.Client
             {
                 sub.subscribe(subRequests, subject, qgroup, handler);
             }
-            catch (Exception ex)
+            catch
             {
                 subMap.Remove(sub.Inbox);
-                throw ex;
+                throw;
             }
 
             return sub;
