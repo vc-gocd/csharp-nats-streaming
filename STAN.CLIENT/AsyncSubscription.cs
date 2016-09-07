@@ -11,7 +11,6 @@ namespace STAN.Client
 {
     class AsyncSubscription : IStanSubscription
     {
-        private object mu = new Object();
         private StanSubscriptionOptions options;
         private string inbox = null;
         private string subject = null;
@@ -118,9 +117,12 @@ namespace STAN.Client
         public void Unsubscribe()
         {
             string linbox = null;
+            string lAckInbox = null;
             Connection lsc = null;
 
-            lock (mu)
+            rwLock.EnterWriteLock();
+
+            try
             {
                 if (sc == null)
                     throw new StanBadSubscriptionException();
@@ -128,11 +130,23 @@ namespace STAN.Client
                 lsc = sc;
                 sc = null;
 
+                linbox = inboxSub.Subject;
                 inboxSub.Unsubscribe();
-                linbox = inbox;
+                inboxSub = null;
+
+                lAckInbox = ackInbox;
+                ackInbox = null;
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                rwLock.ExitWriteLock();
             }
 
-            lsc.unsubscribe(subject, ackInbox);
+            lsc.unsubscribe(subject, linbox, lAckInbox);
         }
 
         internal void manualAck(StanMsg m)
