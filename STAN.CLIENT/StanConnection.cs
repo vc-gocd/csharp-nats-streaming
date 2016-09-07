@@ -412,14 +412,14 @@ namespace STAN.Client
             return sub;
         }
 
-        internal void unsubscribe(string subject, string ackInbox)
+        internal void unsubscribe(string subject, string inbox, string ackInbox)
         {
             IConnection lnc;
 
             lock (mu)
             {
-                lnc = this.nc;
-                subMap.Remove(ackInbox);
+                lnc = nc;
+                subMap.Remove(inbox);
             }
 
             UnsubscribeRequest usr = new UnsubscribeRequest();
