@@ -52,10 +52,7 @@ namespace STAN.Client
             }
             set
             {
-                if (natsURL == null)
-                    natsURL = StanConsts.DefaultNatsURL;
-
-                natsURL = value;
+                natsURL = value != null ? value : StanConsts.DefaultNatsURL;
             }
         }
 
@@ -83,7 +80,7 @@ namespace STAN.Client
             set
             {
                 if (value <= 0)
-                    throw new ArgumentOutOfRangeException("value", "Value must be greater than zero.");
+                    throw new ArgumentOutOfRangeException("value", value, "ConnectTimeout must be greater than zero.");
 
                 connectTimeout = value;
             }
@@ -102,7 +99,7 @@ namespace STAN.Client
             set
             {
                 if (value <= 0)
-                    throw new ArgumentOutOfRangeException("value", "Value must be greater than zero.");
+                    throw new ArgumentOutOfRangeException("value", value, "PubAckWait must be greater than zero.");
 
                 ackTimeout = value;
             }
@@ -121,7 +118,7 @@ namespace STAN.Client
             set
             {
                 if (value == null)
-                    throw new ArgumentNullException("value", "Value cannot be null.");
+                    throw new ArgumentNullException("value", "DiscoverPrefix cannot be null.");
 
                 discoverPrefix = value;
             }
@@ -140,7 +137,7 @@ namespace STAN.Client
             set
             {
                 if (value <= 0)
-                    throw new ArgumentOutOfRangeException("value", "Value must be greater than zero.");
+                    throw new ArgumentOutOfRangeException("value", value, "MaxPubAcksInFlight must be greater than zero.");
 
                 maxPubAcksInflight = value;
             }

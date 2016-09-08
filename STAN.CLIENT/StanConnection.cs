@@ -85,7 +85,7 @@ namespace STAN.Client
 
         internal void wait()
         {
-            wait(int.MaxValue);
+            wait(Timeout.Infinite);
             if (ex != null)
                 throw ex;
         }
@@ -449,11 +449,11 @@ namespace STAN.Client
         public IStanSubscription Subscribe(string subject, StanSubscriptionOptions options, EventHandler<StanMsgHandlerArgs> handler)
         {
             if (subject == null)
-                throw new ArgumentException("cannot be null", "subject");
+                throw new ArgumentNullException("subject");
             if (options == null)
-                throw new ArgumentException("cannot be null", "options");
+                throw new ArgumentNullException("options");
             if (handler == null)
-                throw new ArgumentException("cannot be null", "handler");
+                throw new ArgumentNullException("handler");
 
             return subscribe(subject, null, handler, options);
         }
@@ -466,13 +466,13 @@ namespace STAN.Client
         public IStanSubscription Subscribe(string subject, string qgroup, StanSubscriptionOptions options, EventHandler<StanMsgHandlerArgs> handler)
         {
             if (subject == null)
-                throw new ArgumentException("cannot be null", "subject");
+                throw new ArgumentNullException("subject");
             if (qgroup == null)
-                throw new ArgumentException("cannot be null", "qgroup");
+                throw new ArgumentNullException("qgroup");
             if (options == null)
-                throw new ArgumentException("cannot be null", "options");
+                throw new ArgumentNullException("options");
             if (handler == null)
-                throw new ArgumentException("cannot be null", "handler");
+                throw new ArgumentNullException("handler");
 
             return subscribe(subject, qgroup, handler, options);
         }
