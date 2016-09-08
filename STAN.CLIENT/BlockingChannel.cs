@@ -61,7 +61,7 @@ namespace STAN.Client
         internal BlockingDictionary(long maxSize)
         {
             if (maxSize <= 0)
-                throw new ArgumentException("max size must be greater than 0");
+                throw new ArgumentOutOfRangeException("maxSize", maxSize, "maxSize must be greater than 0");
 
             this.maxSize = maxSize;
         }
