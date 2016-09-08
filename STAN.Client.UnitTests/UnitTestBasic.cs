@@ -860,7 +860,7 @@ namespace STAN.Client.UnitTests
 
                     var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                     // make sure we get an error from an invalid Ack wait
-                    Assert.Throws<ArgumentException>(() => { sOpts.AckWait = 500; });
+                    Assert.Throws<ArgumentOutOfRangeException>(() => { sOpts.AckWait = 500; });
 
                     int ackRedeliverTime = 1000;
 
@@ -910,7 +910,7 @@ namespace STAN.Client.UnitTests
 
                     var sOpts = StanSubscriptionOptions.GetDefaultOptions();
                     // make sure we get an error from an invalid Ack wait
-                    Assert.Throws<ArgumentException>(() => { sOpts.AckWait = 500; });
+                    Assert.Throws<ArgumentOutOfRangeException>(() => { sOpts.AckWait = 500; });
 
                     int ackRedeliverTime = 1000;
 
