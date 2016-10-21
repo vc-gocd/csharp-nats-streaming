@@ -74,7 +74,7 @@ namespace STAN.Client
                         sr.StartTimeDelta = convertTimeSpan(
                             options.useStartTimeDelta ? 
                                 options.startTimeDelta : 
-                                (DateTime.Now - options.startTime));
+                                (DateTime.UtcNow - options.startTime));
                         break;
                     case StartPosition.SequenceStart:
                         sr.StartSequence = options.startSequence;

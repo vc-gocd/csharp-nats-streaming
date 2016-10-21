@@ -377,8 +377,7 @@ namespace STAN.Client.UnitTests
                 seq, count));
         }
 
-        [Fact]
-        public void TestSubscriptionStartAtTime()
+        private void testSubscriptionStartAtTime(bool useUtc)
         {
             int count = 10;
             long received = 0;
@@ -424,10 +423,9 @@ namespace STAN.Client.UnitTests
                     sOpts.StartAt(DateTime.Now);
                     Assert.Throws<StanException>(() => (c.Subscribe("foo", sOpts, eh)));
 
-                    sOpts.StartAt(startTime);
-                    c.Subscribe("foo", sOpts, eh);
-
-                    Assert.True(ev.WaitOne(DEFAULT_WAIT*20));
+                    sOpts.StartAt(useUtc ? startTime.ToUniversalTime() : startTime);
+                    var s = c.Subscribe("foo", sOpts, eh);
+                    Assert.True(ev.WaitOne(DEFAULT_WAIT));
                 }
             }
 
@@ -443,6 +441,18 @@ namespace STAN.Client.UnitTests
             Assert.True(seq == count,
                 string.Format("Received max seq {0}, expected max {1}",
                 seq, count));
+        }
+
+        [Fact]
+        public void TestSubscriptionStartAtTimeLocal()
+        {
+            testSubscriptionStartAtTime(false);
+        }
+
+        [Fact]
+        public void TestSubscriptionStartAtTimeUtc()
+        {
+            testSubscriptionStartAtTime(true);
         }
 
         [Fact]
@@ -1031,8 +1041,8 @@ namespace STAN.Client.UnitTests
 
                     Thread.Sleep(ackRedeliveryTime + 100);
 
-                    checkTime("First redelivery", startDelivery, startFirstRedelivery, ackRedeliveryTime, ackRedeliveryTime / 2);
-                    checkTime("Second redelivery", startFirstRedelivery, startSecondRedelivery, ackRedeliveryTime, ackRedeliveryTime / 2);
+                    checkTime("First redelivery", startDelivery, startFirstRedelivery, ackRedeliveryTime, (ackRedeliveryTime) / 2);
+                    checkTime("Second redelivery", startFirstRedelivery, startSecondRedelivery, ackRedeliveryTime, (ackRedeliveryTime) / 2);
 
                     Assert.True(Interlocked.Read(ref firstDeliveryCount) == toSend);
                     Assert.True(Interlocked.Read(ref firstRedeliveryCount) == toSend);
