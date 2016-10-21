@@ -108,13 +108,15 @@ namespace STAN.Client
         }
 
         /// <summary>
-        /// Optional start time.
+        /// Optional start time.  UTC is recommended although a local time will be converted to UTC.
         /// </summary>
         /// <param name="time"></param>
         public void StartAt(DateTime time)
         {
             useStartTimeDelta = false;
-            startTime = time;
+            startTime = (time.Kind == DateTimeKind.Utc) ? time :
+                time.ToUniversalTime();
+
             startAt = StartPosition.TimeDeltaStart;
         }
 
