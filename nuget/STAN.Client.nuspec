@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>STAN.Client</id>
-        <version>0.1.1.0</version>
+        <version>0.1.2.0</version>
         <title>NATS Streaming .NET Client</title>
         <authors>Apcera,Inc.</authors>
         <owners>Apcera,Inc.</owners>
@@ -11,13 +11,13 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>NATS acts as a central nervous system for distributed systems at scale, such as mobile devices, IoT networks, and cloud native infrastructure.  This is the .NET Streaming client API.</description>
         <summary>NATS Streaming .NET Client</summary>
-        <releaseNotes>Initial release.</releaseNotes>
+        <releaseNotes>Bug fixes.</releaseNotes>
         <copyright>Copyright 2016 Apcera, Inc.</copyright>
         <language />
         <tags>Apcera NATS Messaging Cloud Publish Subscribe PubSub Streaming Persistence</tags>
         <dependencies>
             <dependency id="Google.Protobuf" version="[3.0,]"/>
-            <dependency id="NATS.Client" version="[0.5,]" />
+            <dependency id="NATS.Client" version="[0.6,]" />
         </dependencies>
     </metadata>
     <files>
