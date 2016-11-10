@@ -16,8 +16,8 @@
         <language />
         <tags>Apcera NATS Messaging Cloud Publish Subscribe PubSub Streaming Persistence</tags>
         <dependencies>
-            <dependency id="Google.Protobuf" version="[3.1,]"/>
-            <dependency id="NATS.Client" version="[0.6,]" />
+            <dependency id="Google.Protobuf" version="3.1"/>
+            <dependency id="NATS.Client" version="0.6.1" />
         </dependencies>
     </metadata>
     <files>
