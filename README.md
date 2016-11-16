@@ -278,8 +278,10 @@ var s = c.Subscribe("foo", sOpts, (obj, args) =>
 ```
 
 ## TODO
-- [ ] CI (Appveyor)
-- [ ] Robust Benchmark Application
+- [ ] Core 1.0 support
+- [ ] Rx API
+- [ ] Robust Benchmark Testing
+- [X] CI (Appveyor)
 
 ## License
 
