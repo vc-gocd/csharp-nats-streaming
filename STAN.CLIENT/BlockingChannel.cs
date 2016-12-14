@@ -66,12 +66,7 @@ namespace STAN.Client
             this.maxSize = maxSize;
         }
 
-        internal bool TryGetValue(TKey key, out TValue value)
-        {
-            return TryGetValue(key, out value, -1);
-        }
-
-        internal bool TryGetValue(TKey key, out TValue value, int timeout)
+        internal bool Remove(TKey key, out TValue value, int timeout)
         {
             bool rv = false;
 
@@ -109,6 +104,9 @@ namespace STAN.Client
                 {
                     rv = d.TryGetValue(key, out value);
                 }
+
+                if (rv)
+                    d.Remove(key);
             }
 
             notifySpaceAvailable();
