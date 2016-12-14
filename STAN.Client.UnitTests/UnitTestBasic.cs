@@ -97,6 +97,34 @@ namespace STAN.Client.UnitTests
         }
 
         [Fact]
+        public void TestBasicPubAcksInFlight()
+        {
+            using (new NatsStreamingServer())
+            {
+                var opts = StanOptions.GetDefaultOptions();
+                opts.MaxPubAcksInFlight = 2;
+                opts.PubAckWait = 10 * 1000;
+
+                AutoResetEvent ev = new AutoResetEvent(true);
+
+                using (var c = new StanConnectionFactory().CreateConnection(CLUSTER_ID, CLIENT_ID, opts))
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        try
+                        {
+                            c.Publish("foo", getPayload("hello"));
+                        }
+                        catch (StanException)
+                        {
+                            Assert.True(false, "Timed out on msg " + i);
+                        }
+                    }
+                }
+             }
+        }
+
+        [Fact]
         public void TestBasicAsyncPublish()
         {
             var ev = new AutoResetEvent(false);
@@ -1593,26 +1621,26 @@ namespace STAN.Client.UnitTests
             {
                 AutoResetEvent ev = new AutoResetEvent(false);
                 var opts = StanOptions.GetDefaultOptions();
-                opts.PubAckWait = 1100;
+                opts.PubAckWait = 4000;
                 opts.MaxPubAcksInFlight = 1;
 
                 using (var c = new StanConnectionFactory().CreateConnection(
                     CLUSTER_ID, CLIENT_ID, opts))
                 {
+                    var sw = Stopwatch.StartNew();
+
                     c.Publish("foo", null, (obj, args) =>
                     {
                         // Block the ack handler for 2 seconds.  This should
                         // Block the following send for at least 2 seconds.
+                        Thread.Sleep(2000);
                         ev.Set();
-                        Thread.Sleep(1000);
                     });
 
-                    ev.WaitOne(2000);
-
-                    DateTime startTime = DateTime.Now;
                     c.Publish("foo", null, (obj, args) => { });
-                    DateTime endTime = DateTime.Now;
-                    Assert.True((endTime - startTime).TotalMilliseconds > 1000);
+                    ev.WaitOne();
+
+                    Assert.True(sw.ElapsedMilliseconds  > 1000);
                 }
             }
         }

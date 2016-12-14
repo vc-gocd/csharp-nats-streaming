@@ -245,7 +245,7 @@ namespace STAN.Client
 
             lock (mu)
             {
-                pubAckMap.TryGetValue(guid, out a, 0);
+                pubAckMap.Remove(guid, out a, 0);
             }
 
             return a;
