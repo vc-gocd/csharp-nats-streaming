@@ -6,8 +6,12 @@
 using System;
 using System.Threading;
 using System.Diagnostics;
+#if NET45
 using System.Reflection;
+#endif
 using NATS.Client;
+
+using System.IO;
 
 namespace STAN.Client.UnitTests
 {
@@ -98,7 +102,12 @@ namespace STAN.Client.UnitTests
             }
             else
             {
+#if NET45
                 psInfo.WindowStyle = ProcessWindowStyle.Hidden;
+#else
+                psInfo.CreateNoWindow = false;
+                psInfo.RedirectStandardError = true;
+#endif
             }
 
             psInfo.WorkingDirectory = UnitTestUtilities.GetConfigDir();
@@ -133,8 +142,14 @@ namespace STAN.Client.UnitTests
 
         static internal string GetConfigDir()
         {
+#if NET45
             string baseDir = Assembly.GetExecutingAssembly().CodeBase;
             return baseDir + "\\NATSUnitTests\\config";
+#else
+            return AppContext.BaseDirectory +
+                string.Format("{0}..{0}..{0}..{0}",
+                Path.DirectorySeparatorChar);
+#endif
         }
 
         public void StartDefaultServer()
