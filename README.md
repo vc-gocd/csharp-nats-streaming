@@ -15,7 +15,7 @@ NATS Streaming provides the following high-level feature set:
 - Last Value Semantics
 
 ## Notes
-- Please raise questions/issues via the [Issue Tracker](https://github.com/nats-io/csharp-nats-streaming/issues) or via natsio.slack.com (contact larry@apcera.com or brian@apcera.com for access)
+- Please raise issues or ask questions via the [Issue Tracker](https://github.com/nats-io/csharp-nats-streaming/issues).  For general discussion, visit our slack channel.  Requests to join can be made [here](https://docs.google.com/a/apcera.com/forms/d/e/1FAIpQLSdukR2sddOR8V49PgRgwyUYgVDbm5Oen53tZCgK3jD-uez3Ew/viewform?embedded=true).
 
 ## Installation
 
