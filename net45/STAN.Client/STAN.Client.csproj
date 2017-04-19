@@ -38,8 +38,8 @@
       <HintPath>..\..\packages\Google.Protobuf.3.2.0\lib\net45\Google.Protobuf.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NATS.Client, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NATS.Client.0.7.0\lib\net45\NATS.Client.DLL</HintPath>
+    <Reference Include="NATS.Client, Version=0.7.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NATS.Client.0.7.1\lib\net45\NATS.Client.DLL</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
