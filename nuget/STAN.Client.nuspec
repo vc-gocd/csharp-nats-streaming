@@ -11,7 +11,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>NATS acts as a central nervous system for distributed systems at scale, such as mobile devices, IoT networks, and cloud native infrastructure.  This is the .NET Streaming client API.</description>
         <summary>NATS Streaming .NET Client</summary>
-        <releaseNotes>Bug fixes.</releaseNotes>
+        <releaseNotes>.NET core, 4.5 support, added IStanSubscription.Close(), bug fixes.</releaseNotes>
         <copyright>Copyright 2017 Apcera, Inc.</copyright>
         <language />
         <tags>Apcera NATS Messaging Cloud Publish Subscribe PubSub Streaming Persistence</tags>
