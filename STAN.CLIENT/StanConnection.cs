@@ -75,7 +75,7 @@ namespace STAN.Client
         {
             lock (cond)
             {
-                if (!isComplete)
+                while (!isComplete)
                 {
                     Monitor.Wait(cond, timeout);
                 }
@@ -340,7 +340,7 @@ namespace STAN.Client
                 if (nc == null)
                     throw new StanConnectionClosedException();
 
-                if (pubAckMap.isAtCapacity())
+                while (!pubAckMap.TryAdd(guidValue, a))
                 {
                     var bd = pubAckMap;
 
@@ -356,7 +356,6 @@ namespace STAN.Client
                     }
                 }
 
-                pubAckMap.Add(guidValue, a);
                 localAckSubject = ackSubject;
                 localAckTimeout = opts.ackTimeout;
             }
@@ -408,7 +407,11 @@ namespace STAN.Client
             }
             catch
             {
-                subMap.Remove(sub.Inbox);
+                lock (mu)
+                {
+                    subMap.Remove(sub.Inbox);
+                }
+
                 throw;
             }
 

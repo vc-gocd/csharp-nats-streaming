@@ -18,9 +18,8 @@ namespace STAN.Client
         Object addLock = new Object();
         bool finished = false;
         long maxSize = 1024;
-        bool atCapacity = false;
 
-        internal bool isAtCapacity()
+        private bool isAtCapacity()
         {
             lock (dLock)
             {
@@ -32,26 +31,9 @@ namespace STAN.Client
         {
             lock (addLock)
             {
-                lock (dLock)
-                {
-                    atCapacity = d.Count >= maxSize;
-                }
-
-                if (atCapacity)
+                while (isAtCapacity())
                 {
                     Monitor.Wait(addLock);
-                }
-            }
-        }
-
-        internal void notifySpaceAvailable()
-        {
-            lock (addLock)
-            {
-                if (atCapacity)
-                {
-                    atCapacity = false;
-                    Monitor.Pulse(addLock);
                 }
             }
         }
@@ -69,6 +51,7 @@ namespace STAN.Client
         internal bool Remove(TKey key, out TValue value, int timeout)
         {
             bool rv = false;
+            bool wasAtCapacity = false;
 
             value = default(TValue);
 
@@ -76,11 +59,8 @@ namespace STAN.Client
             {
                 if (!finished)
                 {
-                    if (d.Count > 0)
-                    {
-                        rv = d.TryGetValue(key, out value);
-                    }
-                    else
+                    // check and wait if empty
+                    while (d.Count == 0)
                     {
                         if (timeout < 0)
                         {
@@ -97,29 +77,44 @@ namespace STAN.Client
                             }
                         }
                     }
-                }
 
-                // we waited..
-                if (!finished)
-                {
-                    rv = d.TryGetValue(key, out value);
+                    if (!finished)
+                    {
+                        rv = d.TryGetValue(key, out value);
+                    }
                 }
 
                 if (rv)
+                {
+                    wasAtCapacity = d.Count >= maxSize;
                     d.Remove(key);
-            }
 
-            notifySpaceAvailable();
+                    if (wasAtCapacity)
+                    {
+                        lock (addLock)
+                        {
+                            Monitor.Pulse(addLock);
+                        }
+                    }
+                }
+            }
 
             return rv;
 
         } // get
 
-        internal void Add(TKey key, TValue value)
+        // if false, caller should waitForSpace then
+        // call again (until true)
+        internal bool TryAdd(TKey key, TValue value)
         {
             lock (dLock)
             {
-                
+                // if at capacity, do not attempt to add
+                if (d.Count >= maxSize)
+                {
+                    return false;
+                }
+
                 d[key] =  value;
 
                 // if the queue count was previously zero, we were
@@ -128,6 +123,8 @@ namespace STAN.Client
                 {
                     Monitor.Pulse(dLock);
                 }
+
+                return true;
             }
         }
 
