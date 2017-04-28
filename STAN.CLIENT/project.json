@@ -2,7 +2,7 @@
   "description": "STAN Client API",
   "copyright": "Copyright © Apcera 2017",
   "title": "STAN Client",
-  "version": "0.1.4-*",
+  "version": "0.1.5-*",
   "dependencies": {
     "NETStandard.Library": "1.6.0",
     "NATS.Client": "0.7.1",
