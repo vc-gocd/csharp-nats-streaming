@@ -239,7 +239,7 @@ namespace STAN.Client
             {
                 try
                 {
-                    Unsubscribe();
+                    unsubscribe(options.CloseOnDispose);
                 }
                 catch (Exception) {  /* ignore */ }
             }
