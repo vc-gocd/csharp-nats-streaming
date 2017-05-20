@@ -22,7 +22,7 @@ namespace STAN.Client
         internal bool useStartTimeDelta = false;
         internal TimeSpan startTimeDelta;
         internal bool manualAcks = false;
-        internal bool closeOnDispose = false;
+        internal bool leaveOpen = false;
 
         internal StanSubscriptionOptions() { }
 
@@ -103,10 +103,10 @@ namespace STAN.Client
         /// <remarks>
         /// If Close() or Unsubscribe() is called before Disposing, this flag has no affect
         /// </remarks>
-        public bool CloseOnDispose
+        public bool LeaveOpen
         {
-            get { return closeOnDispose; }
-            set { closeOnDispose = value; }
+            get { return leaveOpen; }
+            set { leaveOpen = value; }
         }
 
         /// <summary>
