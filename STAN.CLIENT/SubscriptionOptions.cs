@@ -101,7 +101,7 @@ namespace STAN.Client
         /// Do Close() on Disposing subscription if true, or Unsubscribe(). If you want to resume subscription with durable name, set true.
         /// </summary>
         /// <remarks>
-        /// If Close() or Unsubscribe() is called before Disposing, this flag has no affect
+        /// If Close() or Unsubscribe() is called before Disposing, this flag has no effect
         /// </remarks>
         public bool LeaveOpen
         {
