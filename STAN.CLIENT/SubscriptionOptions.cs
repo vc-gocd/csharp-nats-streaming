@@ -22,6 +22,7 @@ namespace STAN.Client
         internal bool useStartTimeDelta = false;
         internal TimeSpan startTimeDelta;
         internal bool manualAcks = false;
+        internal bool leaveOpen = false;
 
         internal StanSubscriptionOptions() { }
 
@@ -95,6 +96,17 @@ namespace STAN.Client
         {
             get { return manualAcks; }
             set { manualAcks = value; }
+        }
+        /// <summary>
+        /// Do Close() on Disposing subscription if true, or Unsubscribe(). If you want to resume subscription with durable name, set true.
+        /// </summary>
+        /// <remarks>
+        /// If Close() or Unsubscribe() is called before Disposing, this flag has no effect
+        /// </remarks>
+        public bool LeaveOpen
+        {
+            get { return leaveOpen; }
+            set { leaveOpen = value; }
         }
 
         /// <summary>
