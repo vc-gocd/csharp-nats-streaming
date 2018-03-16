@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("stan-sub")]
-[assembly: AssemblyCopyright("Copyright © Apcera 2016")]
+[assembly: AssemblyCopyright("Copyright © NATS Authors 2016-2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

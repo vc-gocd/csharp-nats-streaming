@@ -1,6 +1,6 @@
 {
   "description": "STAN Client API",
-  "copyright": "Copyright © Apcera 2017",
+  "copyright": "Copyright © The NATS Authors 2017-2018",
   "title": "STAN Client",
   "version": "0.1.5-*",
   "dependencies": {

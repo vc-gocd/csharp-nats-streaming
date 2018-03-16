@@ -1,6 +1,6 @@
 {
   "title": "STAN Subscriber",
-  "copyright": "Copyright © Apcera 2017",
+  "copyright": "Copyright © The NATS Authors 2017-2018",
   "description": "NATS Streaming Subscriber Example",
   "version": "1.0.0-*",
   "buildOptions": {

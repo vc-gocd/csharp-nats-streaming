@@ -1,6 +1,6 @@
 {
   "title": "STAN Publisher",
-  "copyright": "Copyright © Apcera 2017",
+  "copyright": "Copyright © NATS Authors 2017",
   "description": "NATS Streaming Publisher Example",
   "version": "1.0.0-*",
   "buildOptions": {
