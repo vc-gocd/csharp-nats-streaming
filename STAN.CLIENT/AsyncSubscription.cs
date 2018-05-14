@@ -29,6 +29,8 @@ namespace STAN.Client
 
         ReaderWriterLockSlim rwLock = new ReaderWriterLockSlim();
 
+        private volatile bool _disposed;
+
         internal AsyncSubscription(Connection stanConnection, StanSubscriptionOptions opts)
         {
             // TODO: Complete member initialization
@@ -37,15 +39,41 @@ namespace STAN.Client
             sc = stanConnection;
         }
 
-        internal string Inbox
+        /// <summary>
+        /// Releases unmanaged resources and performs other cleanup operations
+        /// </summary>
+        ~AsyncSubscription()
         {
-            get { return inbox; }
+            Dispose(false);
         }
 
-        internal static long convertTimeSpan(TimeSpan ts)
+        private void Dispose(bool disposing)
         {
-            return ts.Ticks * 100;
+            if (!_disposed)
+            {
+                _disposed = true;
+
+                if (disposing)
+                {
+                    // Dispose all managed resources.
+
+                    try
+                    {
+                        unsubscribe(IsDurable && options.LeaveOpen);
+                    }
+                    catch (Exception) {  /* ignore */ }
+
+                    GC.SuppressFinalize(this);
+                }
+                // Clean up unmanaged resources here.
+            }
         }
+
+        internal bool IsDurable => !string.IsNullOrEmpty(options.DurableName);
+
+        internal string Inbox => inbox;
+
+        internal static long convertTimeSpan(TimeSpan ts) => ts.Ticks * 100;
 
         // in STAN, much of this code is in the connection module.
         internal void subscribe(string subRequestSubject, string subject, string qgroup, EventHandler<StanMsgHandlerArgs> handler)
@@ -161,15 +189,9 @@ namespace STAN.Client
             lsc.unsubscribe(subject, linbox, lAckInbox, close);
         }
 
-        public void Unsubscribe()
-        {
-            unsubscribe(false);
-        }
+        public void Unsubscribe() => unsubscribe(false);
 
-        public void Close()
-        {
-            unsubscribe(true);
-        }
+        public void Close() => unsubscribe(true);
 
         internal void manualAck(StanMsg m)
         {
@@ -239,22 +261,8 @@ namespace STAN.Client
             }
         }
 
-        public void Dispose()
-        {
-            // Durables must always explicity unsubscribe.
-            if (string.IsNullOrEmpty(options.DurableName) == false)
-            {
-                try
-                {
-                    unsubscribe(options.LeaveOpen);
-                }
-                catch (Exception) {  /* ignore */ }
-            }
-        }
+        public void Dispose() => Dispose(true);
 
-        internal static StanSubscriptionOptions DefaultOptions
-        {
-            get { return new StanSubscriptionOptions(); }
-        }
+        internal static StanSubscriptionOptions DefaultOptions => new StanSubscriptionOptions();
     }
 }
