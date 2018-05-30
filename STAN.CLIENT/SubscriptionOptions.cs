@@ -44,7 +44,7 @@ namespace STAN.Client
             {
                 durableName = StanOptions.DeepCopy(opts.durableName);
             }
-
+            leaveOpen = opts.leaveOpen;
             manualAcks = opts.manualAcks;
             maxInFlight = opts.maxInFlight;
             startAt = opts.startAt;
