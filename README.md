@@ -70,7 +70,7 @@ The options are described with examples below:
 // Subscribe starting with most recently published value
 var opts = StanSubscriptionOptions.GetDefaultOptions();
 opts.StartWithLastReceived();
-var s = c.Subscribe("foo", (obj, args) =>
+var s = c.Subscribe("foo", opts, (obj, args) =>
 {
     Console.WriteLine("Received a message: {0}",
         System.Text.Encoding.UTF8.GetString(args.Message.Data));
@@ -79,7 +79,7 @@ var s = c.Subscribe("foo", (obj, args) =>
 // Receive all stored values in order
 var opts = StanSubscriptionOptions.GetDefaultOptions();
 opts.DeliverAllAvailable();
-var s = c.Subscribe("foo", (obj, args) =>
+var s = c.Subscribe("foo", opts, (obj, args) =>
 {
     Console.WriteLine("Received a message: {0}",
         System.Text.Encoding.UTF8.GetString(args.Message.Data));
@@ -88,7 +88,7 @@ var s = c.Subscribe("foo", (obj, args) =>
 // Receive messages starting at a specific sequence number
 var opts = StanSubscriptionOptions.GetDefaultOptions();
 opts.StartAtSequence(22);
-var s = c.Subscribe("foo", (obj, args) =>
+var s = c.Subscribe("foo", opts, (obj, args) =>
 {
     Console.WriteLine("Received a message: {0}",
         System.Text.Encoding.UTF8.GetString(args.Message.Data));
@@ -96,8 +96,8 @@ var s = c.Subscribe("foo", (obj, args) =>
 
 // Subscribe starting at a specific time
 var opts = StanSubscriptionOptions.GetDefaultOptions();
-opts.StartAtTime(new DateTime(2016, 07, 28, 5, 35, 04, 570));
-var s = c.Subscribe("foo", (obj, args) =>
+opts.StartAt(new DateTime(2016, 07, 28, 5, 35, 04, 570));
+var s = c.Subscribe("foo", opts, (obj, args) =>
 {
     Console.WriteLine("Received a message: {0}",
         System.Text.Encoding.UTF8.GetString(args.Message.Data));
@@ -105,8 +105,8 @@ var s = c.Subscribe("foo", (obj, args) =>
 
 // Subscribe starting a specific amount of time in the past (e.g. 30 seconds ago)
 var opts = StanSubscriptionOptions.GetDefaultOptions();
-opts.StartAtTimeDelta(new TimeSpan(0, 0, 30));
-var s = c.Subscribe("foo", (obj, args) =>
+opts.StartAt(new TimeSpan(0, 0, 30));
+var s = c.Subscribe("foo", opts, (obj, args) =>
 {
     Console.WriteLine("Received a message: {0}",
         System.Text.Encoding.UTF8.GetString(args.Message.Data));
