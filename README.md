@@ -279,8 +279,67 @@ var s = c.Subscribe("foo", sOpts, (obj, args) =>
 
 ```
 
+### Enabling TLS
+
+Establishing secure connections for use in the NATS streaming client is
+relatively straightforward.  Create a core NATS connection with TLS enabled then
+configure the streaming client to use that secure connection through options.
+
+Here is example code to establish a secure connection:
+
+```csharp
+using System;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using NATS.Client;
+using STAN.Client;
+
+namespace NATSStreamingExamples
+{
+    class StanTLSExample
+    {
+        // This is an override for convenience.  NEVER blindly ignore TLS
+        // errors in production code.
+        static bool verifyServerCert(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            Console.WriteLine("WARN: Ignoring TLS Certificate validation error: {0}", sslPolicyErrors);
+            return true;  // throw verification out the window for this example.
+        }
+
+        // This method returns an established secure core NATS connection
+        // for the streaming client to use.
+        static IConnection createSecureNATSConnection()
+        {
+            // get the default NATS options
+            var natsOptions = ConnectionFactory.GetDefaultOptions();
+
+            // Setup NATS to be "secure", then load and add a certificate into the NATS options.
+            // See https://github.com/nats-io/csharp-nats#tls for additional information.
+            natsOptions.Secure = true;
+            natsOptions.AddCertificate(new X509Certificate2("client.pfx", "password"));
+            natsOptions.TLSRemoteCertificationValidationCallback += verifyServerCert;
+
+            return new ConnectionFactory().CreateConnection(natsOptions);
+        }
+
+        // To use TLS with a NATS streaming client, create a secure core NATS
+        // connection to pass into the NATS streaming client.
+        static void Main(string[] args)
+        {
+            // Get default STAN options, then create and assign a secure
+            // core NATS connection for the streaming client to use.
+            var stanOptions = StanOptions.GetDefaultOptions();
+            stanOptions.NatsConn = createSecureNATSConnection();
+
+            // Finally create a STAN logical connection using the
+            // secure NATS connection we just created.
+            var connection = new StanConnectionFactory().CreateConnection("test-cluster", "test-client-001", stanOptions);
+        }
+    }
+}
+```
+
 ## TODO
-- [X] Core 1.0 support
+
 - [ ] Rx API
 - [ ] Robust Benchmark Testing
-- [X] CI (Appveyor)
