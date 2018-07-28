@@ -131,7 +131,7 @@ namespace STAN.Client.UnitTests
                         }
                     }
                 }
-             }
+            }
         }
 
         [Fact]
@@ -345,10 +345,10 @@ namespace STAN.Client.UnitTests
                         if (args.Message.Sequence != (ulong)count)
                         {
                             ex = new Exception(
-                                string.Format("Invalid sequence returned {0}", 
+                                string.Format("Invalid sequence returned {0}",
                                 args.Message.Sequence));
                         }
-                        ev.Set(); 
+                        ev.Set();
                     });
 
                     sub.Unsubscribe();
@@ -406,8 +406,8 @@ namespace STAN.Client.UnitTests
                 Assert.True(BitConverter.ToInt32(m.Data, 0) == seq);
             }
 
-            Assert.True(seq == count, 
-                string.Format("Received max seq {0}, expected max {1}", 
+            Assert.True(seq == count,
+                string.Format("Received max seq {0}, expected max {1}",
                 seq, count));
         }
 
@@ -679,9 +679,9 @@ namespace STAN.Client.UnitTests
 
                     new Task(() =>
                     {
-                       Thread.Sleep(50);
-                       c.Close();
-                       ev.Set();
+                        Thread.Sleep(50);
+                        c.Close();
+                        ev.Set();
                     }).Start();
 
                     s.Unsubscribe();
@@ -741,12 +741,12 @@ namespace STAN.Client.UnitTests
 
                 c.Close();
 
-                Assert.Throws<StanConnectionClosedException>(()=> c.Publish("foo", null));
-                Assert.Throws<StanConnectionClosedException>(()=> c.Publish("foo", null, (obj, args)=> {/* noop */}));
-                Assert.Throws<StanConnectionClosedException>(()=> c.Subscribe("foo", noopMh));
-                Assert.Throws<StanConnectionClosedException>(()=> c.Subscribe("foo", StanSubscriptionOptions.GetDefaultOptions(), noopMh));
-                Assert.Throws<StanConnectionClosedException>(()=> c.Subscribe("foo", "bar", noopMh));
-                Assert.Throws<StanConnectionClosedException>(()=> c.Subscribe("foo", "bar", StanSubscriptionOptions.GetDefaultOptions(), noopMh));
+                Assert.Throws<StanConnectionClosedException>(() => c.Publish("foo", null));
+                Assert.Throws<StanConnectionClosedException>(() => c.Publish("foo", null, (obj, args) => {/* noop */}));
+                Assert.Throws<StanConnectionClosedException>(() => c.Subscribe("foo", noopMh));
+                Assert.Throws<StanConnectionClosedException>(() => c.Subscribe("foo", StanSubscriptionOptions.GetDefaultOptions(), noopMh));
+                Assert.Throws<StanConnectionClosedException>(() => c.Subscribe("foo", "bar", noopMh));
+                Assert.Throws<StanConnectionClosedException>(() => c.Subscribe("foo", "bar", StanSubscriptionOptions.GetDefaultOptions(), noopMh));
             }
 
             Assert.False(received);
@@ -806,7 +806,7 @@ namespace STAN.Client.UnitTests
                             {
                                 evFirstSetReceived.Set();
                             }
-                        } 
+                        }
                         else if (nr > 10)
                         {
                             try
@@ -1173,8 +1173,8 @@ namespace STAN.Client.UnitTests
                     Assert.True(ev.WaitOne(DEFAULT_WAIT));
 
                     // toSend+1 to count the unacked message after closing in the callback above.
-                    Assert.True(Interlocked.Read(ref received) == toSend+1);
-                    
+                    Assert.True(Interlocked.Read(ref received) == toSend + 1);
+
                     lock (msgGuard)
                     {
                         Assert.True(savedMsgs.Count == toSend);
@@ -1343,7 +1343,7 @@ namespace STAN.Client.UnitTests
                     args.Message.Ack();
                     if (Interlocked.Increment(ref received) == toSend)
                         ev.Set();
-                }   
+                }
                 // Do not ack s2
             };
 
@@ -1393,7 +1393,7 @@ namespace STAN.Client.UnitTests
                     if (nr == toSend)
                         ev.Set();
 
-                    if (nr > 0 && nr % (toSend/2) == 0)
+                    if (nr > 0 && nr % (toSend / 2) == 0)
                     {
                         // This depends on the internal algorithm where the
                         // best resend subscriber is the one with the least number
@@ -1637,7 +1637,7 @@ namespace STAN.Client.UnitTests
                     c.Publish("foo", null, (obj, args) => { });
                     Assert.True(ev.WaitOne(10000));
 
-                    Assert.True(sw.ElapsedMilliseconds  > 1000);
+                    Assert.True(sw.ElapsedMilliseconds > 1000);
                 }
             }
         }
@@ -1657,7 +1657,7 @@ namespace STAN.Client.UnitTests
         [Fact]
         public void TestAsyncPublishAPI()
         {
-           testAsyncPublishAPI();
+            testAsyncPublishAPI();
         }
 
         private async void testAsyncPublishAPIParallel()
@@ -1810,6 +1810,128 @@ namespace STAN.Client.UnitTests
                 testSubscriberClose("dursub", false);
                 testSubscriberClose("durqueuesub", true);
             }
+        }
+
+        private void TestPingIntervalFail(int value)
+        {
+            var opts = StanOptions.GetDefaultOptions();
+            Assert.Throws<ArgumentOutOfRangeException>(() => { opts.PingInterval = value; });
+        }
+
+        private void TestPingMaxOutFail(int value)
+        {
+            var opts = StanOptions.GetDefaultOptions();
+            Assert.Throws<ArgumentOutOfRangeException>(() => { opts.PingMaxOutstanding = value; });
+        }
+
+        [Fact]
+        public void TestPingParameters()
+        {
+            using (new NatsStreamingServer())
+            {
+                TestPingIntervalFail(-1);
+                TestPingIntervalFail(0);
+                TestPingMaxOutFail(-1);
+                TestPingMaxOutFail(0);
+                TestPingMaxOutFail(1);
+            }
+        }
+
+        [Fact]
+        public void TestPingsNatsConnGone()
+        {
+            using (new NatsStreamingServer())
+            {
+                int count = 0;
+                int pingIvl = 200;
+                var exceeded = new AutoResetEvent(false);
+                var nc = new ConnectionFactory().CreateConnection();
+                nc.SubscribeAsync(StanConsts.DefaultDiscoverPrefix + "." + CLUSTER_ID + ".pings", (obj, args) =>
+                {
+                    count++;
+                    if (count > StanConsts.DefaultPingMaxOut+1)
+                    {
+                        exceeded.Set();
+                    }
+                });
+
+                var connLostEvent = new AutoResetEvent(false);
+                var opts = StanOptions.GetDefaultOptions();
+                opts.NatsConn = nc;
+                opts.PingInterval = pingIvl;
+                opts.ConnectionLostEventHandler = (obj, args) =>
+                {
+                    connLostEvent.Set();
+                };
+
+                using (new StanConnectionFactory().CreateConnection(CLUSTER_ID, CLIENT_ID, opts))
+                {
+                    // wait for pings, give us an extra ping just in case.
+                    Assert.True(exceeded.WaitOne(60000 + pingIvl* (StanConsts.DefaultPingMaxOut + 2)));
+
+                    // Close the NATS connection, wait for the error handler to fire (with 10s of slack).
+                    nc.Close();
+                    Assert.True(connLostEvent.WaitOne(120000 + (pingIvl * StanConsts.DefaultPingMaxOut)));
+                }
+            }
+        }
+
+        [Fact]
+        public void TestPingsStreamingServerGone()
+        {
+            using (new NatsServer())
+            {
+                using (var nss = new NatsStreamingServer("-ns nats://127.0.0.1:4222"))
+                {
+                    AutoResetEvent ev = new AutoResetEvent(false);
+
+                    StanOptions so = StanOptions.GetDefaultOptions();
+                    so.PingInterval = 200;
+                    so.PingMaxOutstanding = 3;
+                    so.ConnectionLostEventHandler = (obj, args) =>
+                    {
+                        ev.Set();
+                    };
+
+                    using (var sc = new StanConnectionFactory().CreateConnection(CLUSTER_ID, CLIENT_ID, so))
+                    {
+                        nss.Shutdown();
+                        Assert.True(ev.WaitOne(20000));
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        public void TestConnErrHandlerNotCalledOnNormalClose()
+        {
+            using (new NatsStreamingServer())
+            {
+                var ev = new AutoResetEvent(false);
+                var so = StanOptions.GetDefaultOptions();
+                so.PingInterval = 100;
+                so.PingMaxOutstanding = 3;
+                so.ConnectionLostEventHandler = (obj, args) =>
+                {
+                    ev.Set();
+                };
+
+                var sc = new StanConnectionFactory().CreateConnection(CLUSTER_ID, CLIENT_ID, so);
+                sc.Close();
+
+                // ensure handler is not called
+                Assert.False(ev.WaitOne(2000));
+            }
+        }
+
+        [Fact]
+        public void TestPingsResponseError()
+        {
+        }
+
+        [Fact]
+        public void TestClientIDAndConnIDInPubMsg()
+        {
         }
     }
 }
