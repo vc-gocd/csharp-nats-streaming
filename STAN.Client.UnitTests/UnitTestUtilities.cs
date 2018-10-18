@@ -32,6 +32,7 @@ namespace STAN.Client.UnitTests
             UnitTestUtilities.CleanupExistingServers(exeName);
             executablePath = exeName + ".exe";
             ProcessStartInfo psInfo = createProcessStartInfo(args);
+            psInfo.CreateNoWindow = false;
             p = Process.Start(psInfo);
             for (int i = 1; i <= 20; i++)
             {

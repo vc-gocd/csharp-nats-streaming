@@ -347,35 +347,28 @@ namespace STAN.Client
                     lostConnection = true;
                     pingEx = new StanMaxPingsException();
                 }
-            }
-
-            if (!lostConnection)
-            {
-                try
+                else
                 {
-                    nc.Publish(pingRequests, pingInbox, pingBytes);
-                }
-                catch (Exception ex)
-                when (
-                    ex is NATSConnectionClosedException || 
-                    ex is NATSStaleConnectionException)
-                {
-                    // io exceptions?
-                    lostConnection = true;
-                    pingEx = ex;
+                    pingTimer = new Timer(pingServer, null, pingInterval, Timeout.Infinite);
                 }
             }
 
             if (lostConnection)
             {
                 closeDueToPing(pingEx);
+                return;
             }
-            else
+            
+            try
             {
-                lock (pingLock)
-                {
-                    pingTimer = new Timer(pingServer, null, pingInterval, Timeout.Infinite);
-                }
+                conn.Publish(pingRequests, pingInbox, pingBytes);
+            }
+            catch (Exception ex)
+            when (
+                ex is NATSConnectionClosedException || 
+                ex is NATSStaleConnectionException)
+            {
+                closeDueToPing(ex);
             }
         }
 
@@ -452,7 +445,7 @@ namespace STAN.Client
         {
             // No data means OK (no need to unmarshall)
             var data = e.Message.Data;
-            if (data?.Length == 0)
+            if (data?.Length > 0)
             {
                 var pingResp = new PingResponse();
                 try
@@ -469,13 +462,12 @@ namespace STAN.Client
                 {
                     closeDueToPing(new StanException(err));
                 }
-
-                lock (pingLock)
-                {
-                    pingOut = 0;
-                }
             }
 
+            lock (pingLock)
+            {
+                pingOut = 0;
+            }
         }
 
         private void processHeartBeat(object sender, MsgHandlerEventArgs args)
