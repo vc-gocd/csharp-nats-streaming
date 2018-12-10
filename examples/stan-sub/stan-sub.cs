@@ -147,8 +147,8 @@ Subscription Options:
             if (parsedArgs.ContainsKey("-count"))
                 count = Convert.ToInt32(parsedArgs["-count"]);
 
-            if (parsedArgs.ContainsKey("-url"))
-                url = parsedArgs["-url"];
+            if (parsedArgs.ContainsKey("-server"))
+                url = parsedArgs["-server"];
 
             if (parsedArgs.ContainsKey("-subject"))
                 subject = parsedArgs["-subject"];
