@@ -11,7 +11,7 @@ namespace STAN.Example.Publish
     {
         static readonly string usageText =
 @"Usage: stan-pub
-	-server <url> NATS Streaming server URL(s)
+	-url <url> NATS Streaming server URL(s)
 	-cluster <cluster name> NATS Streaming cluster name
 	-clientid <client ID> NATS Streaming client ID
     -subject <subject> subject to publish on, defaults to foo.
