@@ -64,7 +64,7 @@ Subscription Options:
             var opts = StanOptions.GetDefaultOptions();
             opts.NatsURL = url;
 
-            using (var c = new StanConnectionFactory().CreateConnection(clusterID, clientID))
+            using (var c = new StanConnectionFactory().CreateConnection(clusterID, clientID, opts))
             {
                 TimeSpan elapsed = receiveAsyncSubscriber(c);
               
