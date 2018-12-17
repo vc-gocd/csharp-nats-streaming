@@ -87,7 +87,7 @@ var s = c.Subscribe("foo", opts, (obj, args) =>
 
 // Receive messages starting at a specific sequence number
 var opts = StanSubscriptionOptions.GetDefaultOptions();
-opts.StartAtSequence(22);
+opts.StartAt(22);
 var s = c.Subscribe("foo", opts, (obj, args) =>
 {
     Console.WriteLine("Received a message: {0}",
