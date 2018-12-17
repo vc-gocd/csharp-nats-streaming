@@ -24,7 +24,7 @@ namespace STAN.Example.Subscribe
 @"
 Usage: stan-sub [options] <subject>
 Options:
-    -server < url >           NATS Streaming server URL(s)
+    -url < url >           NATS Streaming server URL(s)
     -cluster < cluster name > NATS Streaming cluster name
     -clientid < client ID >   NATS Streaming client ID
     -verbose                  Verbose mode (affects performance).
