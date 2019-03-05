@@ -157,7 +157,7 @@ namespace STAN.Client
         }
 
         /// <summary>
-        /// MaxPingsOut is an option to set the maximum number 
+        /// PingMaxOutstanding is an option to set the maximum number 
         /// of outstanding pings with the streaming server.
         /// See <see cref="StanConsts.DefaultPingMaxOut"/>.
         /// </summary>
