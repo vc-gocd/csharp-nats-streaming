@@ -146,7 +146,7 @@ namespace STAN.Client
         private ISubscription pingSubscription;
 
         private readonly object pingLock = new object();
-        private NUID pubNUID = new NUID();
+        private readonly NUID pubNUID = new NUID();
         private Timer pingTimer;
         private readonly byte[] pingBytes;
         private readonly string pingRequests;
