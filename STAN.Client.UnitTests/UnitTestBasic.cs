@@ -1878,7 +1878,7 @@ namespace STAN.Client.UnitTests
         }
 
         [Fact]
-        public void TestPingsStreamingServerGone()
+        public void TestPingStreamingServerGone()
         {
             using (new NatsServer())
             {
@@ -2001,7 +2001,6 @@ namespace STAN.Client.UnitTests
         {
             IStanConnection sc1;
             StanConnectionFactory scf = new StanConnectionFactory();
-            string errStr = "";
 
             var ev = new AutoResetEvent(false);
 
@@ -2052,5 +2051,65 @@ namespace STAN.Client.UnitTests
             }
         }
 
+        [Fact]
+        public void TestPingCloseUnlockPubCalls()
+        {
+            // FIXME - this seems to take too long... no deadlock, but unecessary blocking?
+            StanConnectionFactory scf = new StanConnectionFactory();
+            using (new NatsServer())
+            {
+                string nssArgs = "-ns tcp://127.0.0.1:4222";
+                using (var nss = new NatsStreamingServer(nssArgs))
+                {
+                    var ev = new AutoResetEvent(false);
+                    var so = StanOptions.GetDefaultOptions();
+                    so.PingInterval = 50;
+                    so.PingMaxOutstanding = 10;
+                    //so.MaxPubAcksInFlight = 1;
+                    so.PubAckWait = 100;
+                    var sc = scf.CreateConnection(CLUSTER_ID, CLIENT_ID);
+
+                    int total = 10;
+                    long count = 0;
+                    void ah(object obj, StanAckHandlerArgs args)
+                    {
+                        if (Interlocked.Increment(ref count) == (total/2)-1)
+                        {
+                            ev.Set();
+                        }
+                    }
+
+                    nss.Shutdown();
+
+                    List<Task<string>> pubs = new List<Task<string>>();
+                    for (int i = 0; i < total / 2; i++)
+                    {
+                        pubs.Add(Task.Run<string>(() => { return sc.Publish("foo", null, ah); }));
+                        pubs.Add(sc.PublishAsync("foo", null));
+                    }
+
+                    foreach (Task t in pubs)
+                    {
+                        try
+                        {
+                            t.Wait();
+                        }
+                        catch (Exception)
+                        {
+                            Interlocked.Increment(ref count);
+                        }
+                    }
+
+                    int check = 0;
+                    while (Interlocked.Read(ref count) != total && check < 40)
+                    {
+                        ev.WaitOne(500);
+                        check++;
+                    }
+
+                    Assert.True(count == total);
+                }
+            }
+        }
     }
 }
