@@ -130,7 +130,7 @@ namespace STAN.Client
 
     public class Connection : IStanConnection, IDisposable
     {
-        private Object mu = new Object();
+        private readonly Object mu = new Object();
 
         private readonly string clientID;
         private readonly object connID; // This is a NUID that uniquely identifies connections.  Stored as a protobuf bytestring.
