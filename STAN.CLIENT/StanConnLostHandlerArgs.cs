@@ -16,7 +16,7 @@ namespace STAN.Client
 {
     /// <summary>
     /// This class is used with an acknowledgement event handler indicating 
-    /// a message has been acknoweledged by the STAN server.
+    /// a message has been acknowledged by the STAN server.
     /// </summary>
     public class StanConnLostHandlerArgs : EventArgs
     {
