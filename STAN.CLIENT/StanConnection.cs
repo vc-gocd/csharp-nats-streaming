@@ -141,9 +141,9 @@ namespace STAN.Client
         private readonly string closeRequests; // Subject to send close requests.
         private readonly string ackSubject; // publish acks
 
-        private ISubscription ackSubscription;
-        private ISubscription hbSubscription;
-        private ISubscription pingSubscription;
+        private ISubscription ackSubscription = null;
+        private ISubscription hbSubscription = null;
+        private ISubscription pingSubscription = null;
 
         private readonly object pingLock = new object();
         private readonly NUID pubNUID = new NUID();
@@ -166,6 +166,7 @@ namespace STAN.Client
         private bool ncOwned = false;
 
         private Connection() { }
+
 
         internal Connection(string stanClusterID, string clientID, StanOptions options)
         {
@@ -196,6 +197,15 @@ namespace STAN.Client
                 ncOwned = false;
             }
 
+            void protoUnsubscribe()
+            {
+                if (nc != null && !nc.IsClosed())
+                {
+                    ackSubscription?.Unsubscribe();
+                    hbSubscription?.Unsubscribe();
+                    pingSubscription?.Unsubscribe();
+                }
+            }
             // Prepare a subscription on ping responses, even if we are not
             // going to need it, so that if that fails, it fails before initiating
             // a connection.
@@ -234,6 +244,7 @@ namespace STAN.Client
             }
             catch (NATSTimeoutException)
             {
+                protoUnsubscribe();
                 throw new StanConnectRequestTimeoutException();
             }
 
@@ -244,11 +255,13 @@ namespace STAN.Client
             }
             catch (Exception e)
             {
+                protoUnsubscribe();
                 throw new StanConnectRequestException(e);
             }
 
             if (!string.IsNullOrEmpty(response.Error))
             {
+                protoUnsubscribe();
                 throw new StanConnectRequestException(response.Error);
             }
 
@@ -307,6 +320,7 @@ namespace STAN.Client
                     lock (pingLock)
                     {
                         pingTimer = new Timer(pingServer, null, pingInterval, Timeout.Infinite);
+                        GC.SuppressFinalize(pingTimer);
                     }
                 }
             }
@@ -329,14 +343,15 @@ namespace STAN.Client
             Exception pingEx = null;
             bool lostConnection = false;
 
-            // we're closed, just exit
             lock (pingLock)
             {
+                // we're already closed, just exit
                 if (pingTimer == null)
                 {
                     return;
                 }
 
+                pingTimer.Dispose();
                 pingTimer = null;
 
                 pingOut++;
@@ -349,6 +364,8 @@ namespace STAN.Client
                 }
                 else
                 {
+                    // FIXME:  reuse the ping timer.  It's only firing once,
+                    // so recreate it.  GC?
                     pingTimer = new Timer(pingServer, null, pingInterval, Timeout.Infinite);
                 }
             }
@@ -416,6 +433,7 @@ namespace STAN.Client
             }
         }
 
+        // caller must lock under mu
         private void cleanupOnClose(Exception ex)
         {
             lock (pingLock)
@@ -454,6 +472,7 @@ namespace STAN.Client
                 }
                 catch
                 {
+                    // Ignore this as an invalid protocol message.
                     return;
                 }
 

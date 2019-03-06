@@ -199,7 +199,7 @@ namespace STAN.Client
         /// Represents the method that will handle an event raised
         /// when a connection has been disconnected from a streaming server.
         /// </summary>
-        public EventHandler<StanConnLostHandlerArgs> ConnectionLostEventHandler = null;
+        public EventHandler<StanConnLostHandlerArgs> ConnectionLostEventHandler { get; set; }
 
         /// <summary>
         /// Returns the default connection options.

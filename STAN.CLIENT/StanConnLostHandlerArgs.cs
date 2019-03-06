@@ -16,7 +16,7 @@ namespace STAN.Client
 {
     /// <summary>
     /// This class is used with an acknowledgement event handler indicating 
-    /// a message has been acknowledged by the STAN server.
+    /// a message has been acknowledged by the NATS Streaming server.
     /// </summary>
     public class StanConnLostHandlerArgs : EventArgs
     {
@@ -32,12 +32,12 @@ namespace STAN.Client
         }
 
         /// <summary>
-        /// Contains the GUID of the acknowledged message.
+        /// The connection to the NATS Streaming server.
         /// </summary>
         public IStanConnection Connection => sc;
 
         /// <summary>
-        /// Returns an error if applicable.
+        /// The connection error if applicable, null otherwise.
         /// </summary>
         public Exception ConnectionException => connEx;
     }
