@@ -2468,7 +2468,7 @@ namespace STAN.Client {
             break;
           }
           case 80: {
-            startPosition_ = (global::STAN.Client.StartPosition) input.ReadEnum();
+            StartPosition = (global::STAN.Client.StartPosition) input.ReadEnum();
             break;
           }
           case 88: {
