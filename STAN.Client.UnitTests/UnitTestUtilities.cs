@@ -66,8 +66,8 @@ namespace STAN.Client.UnitTests
 #if NET45
                 WindowStyle = ProcessWindowStyle.Hidden,
 #else
-                psInfo.CreateNoWindow = false;
-                psInfo.RedirectStandardError = true;
+                CreateNoWindow = false,
+                RedirectStandardError = true,
 #endif
                 Arguments = args,
                 WorkingDirectory = UnitTestUtilities.GetConfigDir()
