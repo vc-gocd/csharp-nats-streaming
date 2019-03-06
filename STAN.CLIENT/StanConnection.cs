@@ -167,6 +167,15 @@ namespace STAN.Client
 
         private Connection() { }
 
+        void protoUnsubscribe()
+        {
+            if (nc != null && !nc.IsClosed())
+            {
+                ackSubscription?.Unsubscribe();
+                hbSubscription?.Unsubscribe();
+                pingSubscription?.Unsubscribe();
+            }
+        }
 
         internal Connection(string stanClusterID, string clientID, StanOptions options)
         {
@@ -197,15 +206,6 @@ namespace STAN.Client
                 ncOwned = false;
             }
 
-            void protoUnsubscribe()
-            {
-                if (nc != null && !nc.IsClosed())
-                {
-                    ackSubscription?.Unsubscribe();
-                    hbSubscription?.Unsubscribe();
-                    pingSubscription?.Unsubscribe();
-                }
-            }
             // Prepare a subscription on ping responses, even if we are not
             // going to need it, so that if that fails, it fails before initiating
             // a connection.
