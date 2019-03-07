@@ -2065,19 +2065,18 @@ namespace STAN.Client.UnitTests
                     var so = StanOptions.GetDefaultOptions();
                     so.PingInterval = 50;
                     so.PingMaxOutstanding = 10;
-                    //so.MaxPubAcksInFlight = 1;
                     so.PubAckWait = 100;
                     var sc = scf.CreateConnection(CLUSTER_ID, CLIENT_ID);
 
                     int total = 10;
                     long count = 0;
-                    void ah(object obj, StanAckHandlerArgs args)
+                    EventHandler<StanAckHandlerArgs> ah = (obj, args) =>
                     {
-                        if (Interlocked.Increment(ref count) == (total/2)-1)
+                        if (Interlocked.Increment(ref count) == (total / 2) - 1)
                         {
                             ev.Set();
                         }
-                    }
+                    };
 
                     nss.Shutdown();
 
