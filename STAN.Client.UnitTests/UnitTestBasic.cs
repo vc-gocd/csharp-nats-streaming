@@ -1542,7 +1542,7 @@ namespace STAN.Client.UnitTests
         [Fact]
         public void TestMaxChannels()
         {
-            using (new NatsStreamingServer("-mc 5"))
+            using (new NatsStreamingServer(" -mc 5"))
             {
                 using (var c = DefaultConnection)
                 {
@@ -1882,7 +1882,7 @@ namespace STAN.Client.UnitTests
         {
             using (new NatsServer())
             {
-                using (var nss = new NatsStreamingServer("-ns nats://127.0.0.1:4222"))
+                using (var nss = new NatsStreamingServer(" -ns nats://127.0.0.1:4222"))
                 {
                     AutoResetEvent ev = new AutoResetEvent(false);
 
@@ -1951,8 +1951,8 @@ namespace STAN.Client.UnitTests
 
             // Create a NATS streaming server with an embedded NATS server
             // clustered with an external NATS server.
-            string s1Args = "-p 4222 -cluster \"nats://127.0.0.1:6222\" -routes \"nats://127.0.0.1:6333\" --no_advertise=true";
-            string s2Args = "-p 4333 -cluster \"nats://127.0.0.1:6333\" -routes \"nats://127.0.0.1:6222\" --no_advertise=true";
+            string s1Args = " -p 4222 -cluster \"nats://127.0.0.1:6222\" -routes \"nats://127.0.0.1:6333\" --no_advertise=true";
+            string s2Args = " -p 4333 -cluster \"nats://127.0.0.1:6333\" -routes \"nats://127.0.0.1:6222\" --no_advertise=true";
             using (new NatsStreamingServer(s1Args))
             {
                 using (new NatsServer(s2Args))
@@ -2006,8 +2006,8 @@ namespace STAN.Client.UnitTests
 
             // Create a NATS streaming server with an embedded NATS server
             // clustered with an external NATS server.
-            string s1Args = "-p 4222 -cluster \"nats://127.0.0.1:6222\" -routes \"nats://127.0.0.1:6333\" --no_advertise=true";
-            string s2Args = "-p 4333 -cluster \"nats://127.0.0.1:6333\" -routes \"nats://127.0.0.1:6222\" --no_advertise=true";
+            string s1Args = " -p 4222 -cluster \"nats://127.0.0.1:6222\" -routes \"nats://127.0.0.1:6333\" --no_advertise=true";
+            string s2Args = " -p 4333 -cluster \"nats://127.0.0.1:6333\" -routes \"nats://127.0.0.1:6222\" --no_advertise=true";
             using (new NatsStreamingServer(s1Args))
             {
                 using (new NatsServer(s2Args))
@@ -2058,7 +2058,7 @@ namespace STAN.Client.UnitTests
             StanConnectionFactory scf = new StanConnectionFactory();
             using (new NatsServer())
             {
-                string nssArgs = "-ns tcp://127.0.0.1:4222";
+                string nssArgs = " -ns tcp://127.0.0.1:4222";
                 using (var nss = new NatsStreamingServer(nssArgs))
                 {
                     var ev = new AutoResetEvent(false);
