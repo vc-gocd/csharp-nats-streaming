@@ -61,17 +61,16 @@ namespace STAN.Client.UnitTests
 
         private ProcessStartInfo createProcessStartInfo(string args)
         {
-            return new ProcessStartInfo(executablePath)
-            {
+            ProcessStartInfo ps = new ProcessStartInfo(executablePath);
+            ps.Arguments = args;
+            ps.WorkingDirectory = UnitTestUtilities.GetConfigDir();
 #if NET45
-                WindowStyle = ProcessWindowStyle.Hidden,
+            ps.WindowStyle = ProcessWindowStyle.Hidden;
 #else
-                CreateNoWindow = false,
-                RedirectStandardError = true,
+            ps.CreateNoWindow = false;
+            ps.RedirectStandardError = true;
 #endif
-                Arguments = args,
-                WorkingDirectory = UnitTestUtilities.GetConfigDir()
-            };
+            return ps;
         }
 
         public bool IsRunning()
