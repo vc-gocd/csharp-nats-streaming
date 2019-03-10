@@ -317,11 +317,7 @@ namespace STAN.Client
                     pingMaxOut = response.PingMaxOut;
                     pingBytes = ProtocolSerializer.createPing(connID);
 
-                    lock (pingLock)
-                    {
-                        pingTimer = new Timer(pingServer, null, pingInterval, Timeout.Infinite);
-                        GC.SuppressFinalize(pingTimer);
-                    }
+                    pingTimer = new Timer(pingServer, null, pingInterval, Timeout.Infinite);
                 }
             }
             if (unsubPing)
@@ -351,8 +347,8 @@ namespace STAN.Client
                     return;
                 }
 
-                pingTimer.Dispose();
-                pingTimer = null;
+                // disable timer, will never be called.
+                pingTimer.Change(Timeout.Infinite, Timeout.Infinite);
 
                 pingOut++;
                 conn = nc;
@@ -364,9 +360,8 @@ namespace STAN.Client
                 }
                 else
                 {
-                    // FIXME:  reuse the ping timer.  It's only firing once,
-                    // so recreate it.  GC?
-                    pingTimer = new Timer(pingServer, null, pingInterval, Timeout.Infinite);
+                    //reactivate timer.
+                    pingTimer.Change(pingInterval, Timeout.Infinite);
                 }
             }
 
