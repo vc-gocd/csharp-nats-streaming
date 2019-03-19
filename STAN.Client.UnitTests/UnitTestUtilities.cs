@@ -32,21 +32,27 @@ namespace STAN.Client.UnitTests
             UnitTestUtilities.CleanupExistingServers(exeName);
             executablePath = exeName + ".exe";
             ProcessStartInfo psInfo = createProcessStartInfo(args);
-            psInfo.CreateNoWindow = false;
-            p = Process.Start(psInfo);
-            for (int i = 1; i <= 20; i++)
+            try
             {
-                Thread.Sleep(100 * i);
-                if (IsRunning())
-                    break;
-            }
+                p = Process.Start(psInfo);
+                for (int i = 1; i <= 20; i++)
+                {
+                    Thread.Sleep(100 * i);
+                    if (IsRunning())
+                        break;
+                }
 
-            if (p.HasExited)
+                if (p.HasExited)
+                {
+                    throw new Exception("Unable to start process.");
+                }
+
+                Thread.Sleep(1000);
+            }
+            catch (Exception ex)
             {
-                throw new Exception("Server failure with exit code: " + p.ExitCode);
+                throw new Exception(string.Format("{0} {1} failure with error: {2}", p.StartInfo.FileName, p.StartInfo.Arguments, ex.Message));
             }
-
-            Thread.Sleep(1000);
         }
 
         public RunnableServer(string exeName)

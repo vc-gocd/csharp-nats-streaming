@@ -1951,7 +1951,7 @@ namespace STAN.Client.UnitTests
 
             // Create a NATS streaming server with an embedded NATS server
             // clustered with an external NATS server.
-            string s1Args = " -p 4222 -cluster \"nats://127.0.0.1:6222\" -routes \"nats://127.0.0.1:6333\" --no_advertise=true";
+            string s1Args = " -h -p 4222 -cluster \"nats://127.0.0.1:6222\" -routes \"nats://127.0.0.1:6333\" --no_advertise=true";
             string s2Args = " -p 4333 -cluster \"nats://127.0.0.1:6333\" -routes \"nats://127.0.0.1:6222\" --no_advertise=true";
             using (new NatsStreamingServer(s1Args))
             {
