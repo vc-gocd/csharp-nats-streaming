@@ -51,7 +51,8 @@ namespace STAN.Client.UnitTests
             }
             catch (Exception ex)
             {
-                throw new Exception(string.Format("{0} {1} failure with error: {2}", p.StartInfo.FileName, p.StartInfo.Arguments, ex.Message));
+                p = null;
+                throw new Exception(string.Format("{0} {1} failure with error: {2}", psInfo.FileName, psInfo.Arguments, ex.Message));
             }
         }
 
