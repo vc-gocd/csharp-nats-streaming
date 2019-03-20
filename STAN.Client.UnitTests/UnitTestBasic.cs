@@ -986,9 +986,9 @@ namespace STAN.Client.UnitTests
             TimeSpan duration = time2 - time1;
 
             if (duration < (expected - tolerance))
-                throw new Exception("Duration is below tolerance.");
+                throw new Exception(string.Format("Duration {0} is below tolerance {1}.", duration, (expected-tolerance)));
             if (duration > (expected + tolerance))
-                throw new Exception("Duration is above tolerance.");
+                throw new Exception(string.Format("Duration {0} is above tolerance {1}.", duration, (expected+tolerance)));
         }
 
         private void testRedelivery(int count, bool useQueueSub)
@@ -1089,7 +1089,7 @@ namespace STAN.Client.UnitTests
         [Fact]
         public void TestHighRedeliveryToSubMoreThanOnce()
         {
-            testRedelivery(100, false);
+            testRedelivery(20, false);
         }
 
         [Fact]
@@ -1101,7 +1101,7 @@ namespace STAN.Client.UnitTests
         [Fact]
         public void TestHighRedeliveryToQueueSubMoreThanOnce()
         {
-            testRedelivery(100, false);
+            testRedelivery(20, false);
         }
 
         [Fact]
