@@ -1070,8 +1070,8 @@ namespace STAN.Client.UnitTests
 
                     Thread.Sleep(ackRedeliveryTime + 100);
 
-                    checkTime("First redelivery", startDelivery, startFirstRedelivery, ackRedeliveryTime, (ackRedeliveryTime) / 2);
-                    checkTime("Second redelivery", startFirstRedelivery, startSecondRedelivery, ackRedeliveryTime, (ackRedeliveryTime) / 2);
+                    checkTime("First redelivery", startDelivery, startFirstRedelivery, ackRedeliveryTime, (int)(ackRedeliveryTime*.80));
+                    checkTime("Second redelivery", startFirstRedelivery, startSecondRedelivery, ackRedeliveryTime, (int)(ackRedeliveryTime * .80));
 
                     Assert.True(Interlocked.Read(ref firstDeliveryCount) == toSend);
                     Assert.True(Interlocked.Read(ref firstRedeliveryCount) == toSend);
