@@ -1925,6 +1925,44 @@ namespace STAN.Client.UnitTests
             }
         }
 
+        // This method connects to two servers, and attempts to send
+        // messages through them for a number of iterations over a timeout.
+        // If a message has been received, we know there is connectivity
+        // (a route) between the url1 and url2 server endpoints.
+        private bool waitForRoute(string url1, string url2, int timeout)
+        {
+            AutoResetEvent ev = new AutoResetEvent(false);
+            bool routeEstablished = false;
+
+            var cf = new ConnectionFactory();
+
+            // create conn 1
+            var opts = ConnectionFactory.GetDefaultOptions();
+            opts.AllowReconnect = false;
+            opts.Url = url1;
+            var nc1 = cf.CreateConnection(opts);
+            opts.Url = url1;
+
+            // create conn 2, wait for a message
+            var nc2 = cf.CreateConnection(opts);
+            nc2.SubscribeAsync("routecheck", (obj, args) =>
+            {
+                ev.Set();
+            });
+            nc2.Flush();
+
+            for (int i = 0; i < 10 && routeEstablished == false; i++)
+            {
+                nc1.Publish("routecheck", null);
+                nc1.Flush();
+                routeEstablished = ev.WaitOne(timeout / 10);               
+            }
+            nc1.Close();
+            nc2.Close();
+
+            return routeEstablished;
+        }
+
         // This will test a ping response error, with the error
         // being that a client has been replaced.
         //
@@ -1957,6 +1995,9 @@ namespace STAN.Client.UnitTests
             {
                 using (new NatsServer(s2Args))
                 {
+                    Assert.True(waitForRoute("nats://127.0.0.1:4222", "nats://127.0.0.1:4333", 30000), 
+                        "Route was not established.");
+
                     // Connect to the routed NATS server, and set ping values
                     // to speed up the test and be resilient to slow CI instances.
                     var so = StanOptions.GetDefaultOptions();
@@ -2012,6 +2053,8 @@ namespace STAN.Client.UnitTests
             {
                 using (new NatsServer(s2Args))
                 {
+                    Assert.True(waitForRoute("nats://127.0.0.1:4222", "nats://127.0.0.1:4333", 30000),
+                        "Route was not established.");
                     // Connect to the routed NATS server, and set ping values
                     // to speed up the test and be resilient to slow CI instances.
                     var cf = new ConnectionFactory();
@@ -2028,7 +2071,6 @@ namespace STAN.Client.UnitTests
                     so.NatsConn = cf.CreateConnection(no);
                     sc1 = scf.CreateConnection(CLUSTER_ID, CLIENT_ID, so);
                     sc1.Publish("foo", null);
-
                     // Falling out of this block will stop the server
                 }
 
