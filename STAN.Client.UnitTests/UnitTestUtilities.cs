@@ -22,109 +22,75 @@ using System.IO;
 
 namespace STAN.Client.UnitTests
 {
-    class NatsStreamingServer : IDisposable
+    class RunnableServer : IDisposable
     {
-        bool debug = false;
         Process p;
+        string executablePath;
 
-        private bool isNatsServerRunning()
+        public void init(string exeName, string args)
+        {
+            UnitTestUtilities.CleanupExistingServers(exeName);
+            executablePath = exeName + ".exe";
+            ProcessStartInfo psInfo = createProcessStartInfo(args);
+            try
+            {
+                p = Process.Start(psInfo);
+                for (int i = 1; i <= 20; i++)
+                {
+                    Thread.Sleep(100 * i);
+                    if (IsRunning())
+                        break;
+                }
+
+                if (p.HasExited)
+                {
+                    throw new Exception("Unable to start process.");
+                }
+
+                Thread.Sleep(1000);
+            }
+            catch (Exception ex)
+            {
+                p = null;
+                throw new Exception(string.Format("{0} {1} failure with error: {2}", psInfo.FileName, psInfo.Arguments, ex.Message));
+            }
+        }
+
+        public RunnableServer(string exeName)
+        {
+            init(exeName, null);
+        }
+
+        public RunnableServer(string exeName, string args)
+        {
+            init(exeName, args);
+        }
+
+        private ProcessStartInfo createProcessStartInfo(string args)
+        {
+            ProcessStartInfo ps = new ProcessStartInfo(executablePath);
+            ps.Arguments = args;
+            ps.WorkingDirectory = UnitTestUtilities.GetConfigDir();
+#if NET45
+            ps.WindowStyle = ProcessWindowStyle.Hidden;
+#else
+            ps.CreateNoWindow = false;
+            ps.RedirectStandardError = true;
+#endif
+            return ps;
+        }
+
+        public bool IsRunning()
         {
             try
             {
-                IConnection c = new NATS.Client.ConnectionFactory().CreateConnection();
-                c.Close();
+                new ConnectionFactory().CreateConnection().Close();
                 return true;
             }
             catch (Exception)
             {
                 return false;
             }
-        }
-
-        public void init(bool shouldDebug)
-        {
-            UnitTestUtilities.CleanupExistingServers();
-
-            debug = shouldDebug;
-            ProcessStartInfo psInfo = createProcessStartInfo();
-            p = Process.Start(psInfo);
-            for (int i = 1; i <= 20; i++)
-            {
-                Thread.Sleep(100*i);
-                if (isNatsServerRunning())
-                    break;
-            }
-
-            if (p.HasExited)
-            {
-                throw new Exception("Server failure with exit code: " + p.ExitCode);
-            }
-            // Allow the Nats streaming server to setup.
-            Thread.Sleep(1000);
-        }
-
-        public NatsStreamingServer()
-        {
-            init(false);
-        }
-
-        public NatsStreamingServer(bool shouldDebug)
-        {
-            init(shouldDebug);
-        }
-
-        private void addArgument(ProcessStartInfo psInfo, string arg)
-        {
-            if (psInfo.Arguments == null)
-            {
-                psInfo.Arguments = arg;
-            }
-            else
-            {
-                string args = psInfo.Arguments;
-                args += arg;
-                psInfo.Arguments = args;
-            }
-        }
-
-        public NatsStreamingServer(int port)
-        {
-            ProcessStartInfo psInfo = createProcessStartInfo();
-
-            addArgument(psInfo, "-p " + port);
-
-            this.p = Process.Start(psInfo);
-        }
-
-        public NatsStreamingServer(string args)
-        {
-            ProcessStartInfo psInfo = this.createProcessStartInfo();
-            addArgument(psInfo, args);
-            p = Process.Start(psInfo);
-        }
-
-        private ProcessStartInfo createProcessStartInfo()
-        {
-            string nss = "nats-streaming-server.exe";
-            ProcessStartInfo psInfo = new ProcessStartInfo(nss);
-
-            if (debug)
-            {
-                psInfo.Arguments = " -SDV -DV";
-            }
-            else
-            {
-#if NET45
-                psInfo.WindowStyle = ProcessWindowStyle.Hidden;
-#else
-                psInfo.CreateNoWindow = false;
-                psInfo.RedirectStandardError = true;
-#endif
-            }
-
-            psInfo.WorkingDirectory = UnitTestUtilities.GetConfigDir();
-
-            return psInfo;
         }
 
         public void Shutdown()
@@ -148,6 +114,18 @@ namespace STAN.Client.UnitTests
         }
     }
 
+    class NatsServer : RunnableServer
+    {
+        public NatsServer() : base("gnatsd") { }
+        public NatsServer(string args) : base("gnatsd", args) { }
+    }
+
+    class NatsStreamingServer : RunnableServer
+    {
+        public NatsStreamingServer() : base("nats-streaming-server") { }
+        public NatsStreamingServer(string args) : base("nats-streaming-server", args) { }
+    }
+
     class UnitTestUtilities
     {
         object mu = new object();
@@ -164,12 +142,12 @@ namespace STAN.Client.UnitTests
 #endif
         }
 
-        internal static void CleanupExistingServers()
+        internal static void CleanupExistingServers(string procname)
         {
             bool hadProc = false;
             try
             {
-                Process[] procs = Process.GetProcessesByName("nats-streaming-server");
+                Process[] procs = Process.GetProcessesByName(procname);
 
                 foreach (Process proc in procs)
                 {

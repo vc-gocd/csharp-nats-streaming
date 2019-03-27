@@ -131,7 +131,7 @@ namespace STAN.Client.UnitTests
                         }
                     }
                 }
-             }
+            }
         }
 
         [Fact]
@@ -345,10 +345,10 @@ namespace STAN.Client.UnitTests
                         if (args.Message.Sequence != (ulong)count)
                         {
                             ex = new Exception(
-                                string.Format("Invalid sequence returned {0}", 
+                                string.Format("Invalid sequence returned {0}",
                                 args.Message.Sequence));
                         }
-                        ev.Set(); 
+                        ev.Set();
                     });
 
                     sub.Unsubscribe();
@@ -406,8 +406,8 @@ namespace STAN.Client.UnitTests
                 Assert.True(BitConverter.ToInt32(m.Data, 0) == seq);
             }
 
-            Assert.True(seq == count, 
-                string.Format("Received max seq {0}, expected max {1}", 
+            Assert.True(seq == count,
+                string.Format("Received max seq {0}, expected max {1}",
                 seq, count));
         }
 
@@ -679,9 +679,9 @@ namespace STAN.Client.UnitTests
 
                     new Task(() =>
                     {
-                       Thread.Sleep(50);
-                       c.Close();
-                       ev.Set();
+                        Thread.Sleep(50);
+                        c.Close();
+                        ev.Set();
                     }).Start();
 
                     s.Unsubscribe();
@@ -741,12 +741,12 @@ namespace STAN.Client.UnitTests
 
                 c.Close();
 
-                Assert.Throws<StanConnectionClosedException>(()=> c.Publish("foo", null));
-                Assert.Throws<StanConnectionClosedException>(()=> c.Publish("foo", null, (obj, args)=> {/* noop */}));
-                Assert.Throws<StanConnectionClosedException>(()=> c.Subscribe("foo", noopMh));
-                Assert.Throws<StanConnectionClosedException>(()=> c.Subscribe("foo", StanSubscriptionOptions.GetDefaultOptions(), noopMh));
-                Assert.Throws<StanConnectionClosedException>(()=> c.Subscribe("foo", "bar", noopMh));
-                Assert.Throws<StanConnectionClosedException>(()=> c.Subscribe("foo", "bar", StanSubscriptionOptions.GetDefaultOptions(), noopMh));
+                Assert.Throws<StanConnectionClosedException>(() => c.Publish("foo", null));
+                Assert.Throws<StanConnectionClosedException>(() => c.Publish("foo", null, (obj, args) => {/* noop */}));
+                Assert.Throws<StanConnectionClosedException>(() => c.Subscribe("foo", noopMh));
+                Assert.Throws<StanConnectionClosedException>(() => c.Subscribe("foo", StanSubscriptionOptions.GetDefaultOptions(), noopMh));
+                Assert.Throws<StanConnectionClosedException>(() => c.Subscribe("foo", "bar", noopMh));
+                Assert.Throws<StanConnectionClosedException>(() => c.Subscribe("foo", "bar", StanSubscriptionOptions.GetDefaultOptions(), noopMh));
             }
 
             Assert.False(received);
@@ -806,7 +806,7 @@ namespace STAN.Client.UnitTests
                             {
                                 evFirstSetReceived.Set();
                             }
-                        } 
+                        }
                         else if (nr > 10)
                         {
                             try
@@ -986,9 +986,9 @@ namespace STAN.Client.UnitTests
             TimeSpan duration = time2 - time1;
 
             if (duration < (expected - tolerance))
-                throw new Exception("Duration is below tolerance.");
+                throw new Exception(string.Format("Duration {0} is below tolerance {1}.", duration, (expected-tolerance)));
             if (duration > (expected + tolerance))
-                throw new Exception("Duration is above tolerance.");
+                throw new Exception(string.Format("Duration {0} is above tolerance {1}.", duration, (expected+tolerance)));
         }
 
         private void testRedelivery(int count, bool useQueueSub)
@@ -1070,8 +1070,8 @@ namespace STAN.Client.UnitTests
 
                     Thread.Sleep(ackRedeliveryTime + 100);
 
-                    checkTime("First redelivery", startDelivery, startFirstRedelivery, ackRedeliveryTime, (ackRedeliveryTime) / 2);
-                    checkTime("Second redelivery", startFirstRedelivery, startSecondRedelivery, ackRedeliveryTime, (ackRedeliveryTime) / 2);
+                    checkTime("First redelivery", startDelivery, startFirstRedelivery, ackRedeliveryTime, (int)(ackRedeliveryTime*.80));
+                    checkTime("Second redelivery", startFirstRedelivery, startSecondRedelivery, ackRedeliveryTime, (int)(ackRedeliveryTime * .80));
 
                     Assert.True(Interlocked.Read(ref firstDeliveryCount) == toSend);
                     Assert.True(Interlocked.Read(ref firstRedeliveryCount) == toSend);
@@ -1089,7 +1089,7 @@ namespace STAN.Client.UnitTests
         [Fact]
         public void TestHighRedeliveryToSubMoreThanOnce()
         {
-            testRedelivery(100, false);
+            testRedelivery(20, false);
         }
 
         [Fact]
@@ -1101,7 +1101,7 @@ namespace STAN.Client.UnitTests
         [Fact]
         public void TestHighRedeliveryToQueueSubMoreThanOnce()
         {
-            testRedelivery(100, false);
+            testRedelivery(20, false);
         }
 
         [Fact]
@@ -1173,8 +1173,8 @@ namespace STAN.Client.UnitTests
                     Assert.True(ev.WaitOne(DEFAULT_WAIT));
 
                     // toSend+1 to count the unacked message after closing in the callback above.
-                    Assert.True(Interlocked.Read(ref received) == toSend+1);
-                    
+                    Assert.True(Interlocked.Read(ref received) == toSend + 1);
+
                     lock (msgGuard)
                     {
                         Assert.True(savedMsgs.Count == toSend);
@@ -1343,7 +1343,7 @@ namespace STAN.Client.UnitTests
                     args.Message.Ack();
                     if (Interlocked.Increment(ref received) == toSend)
                         ev.Set();
-                }   
+                }
                 // Do not ack s2
             };
 
@@ -1393,7 +1393,7 @@ namespace STAN.Client.UnitTests
                     if (nr == toSend)
                         ev.Set();
 
-                    if (nr > 0 && nr % (toSend/2) == 0)
+                    if (nr > 0 && nr % (toSend / 2) == 0)
                     {
                         // This depends on the internal algorithm where the
                         // best resend subscriber is the one with the least number
@@ -1542,7 +1542,7 @@ namespace STAN.Client.UnitTests
         [Fact]
         public void TestMaxChannels()
         {
-            using (new NatsStreamingServer("-mc 5"))
+            using (new NatsStreamingServer(" -mc 5"))
             {
                 using (var c = DefaultConnection)
                 {
@@ -1637,7 +1637,7 @@ namespace STAN.Client.UnitTests
                     c.Publish("foo", null, (obj, args) => { });
                     Assert.True(ev.WaitOne(10000));
 
-                    Assert.True(sw.ElapsedMilliseconds  > 1000);
+                    Assert.True(sw.ElapsedMilliseconds > 1000);
                 }
             }
         }
@@ -1657,7 +1657,7 @@ namespace STAN.Client.UnitTests
         [Fact]
         public void TestAsyncPublishAPI()
         {
-           testAsyncPublishAPI();
+            testAsyncPublishAPI();
         }
 
         private async void testAsyncPublishAPIParallel()
@@ -1809,6 +1809,347 @@ namespace STAN.Client.UnitTests
 
                 testSubscriberClose("dursub", false);
                 testSubscriberClose("durqueuesub", true);
+            }
+        }
+
+        private void TestPingIntervalFail(int value)
+        {
+            var opts = StanOptions.GetDefaultOptions();
+            Assert.Throws<ArgumentOutOfRangeException>(() => { opts.PingInterval = value; });
+        }
+
+        private void TestPingMaxOutFail(int value)
+        {
+            var opts = StanOptions.GetDefaultOptions();
+            Assert.Throws<ArgumentOutOfRangeException>(() => { opts.PingMaxOutstanding = value; });
+        }
+
+        [Fact]
+        public void TestPingParameters()
+        {
+            using (new NatsStreamingServer())
+            {
+                TestPingIntervalFail(-1);
+                TestPingIntervalFail(0);
+                TestPingMaxOutFail(-1);
+                TestPingMaxOutFail(0);
+                TestPingMaxOutFail(1);
+            }
+        }
+
+        [Fact]
+        public void TestPingsNatsConnGone()
+        {
+            using (new NatsStreamingServer())
+            {
+                int count = 0;
+                int pingIvl = 1000;
+                var exceeded = new AutoResetEvent(false);
+                var nc = new ConnectionFactory().CreateConnection();
+                nc.SubscribeAsync(StanConsts.DefaultDiscoverPrefix + "." + CLUSTER_ID + ".pings", (obj, args) =>
+                {
+                    count++;
+                    if (count > StanConsts.DefaultPingMaxOut)
+                    {
+                        exceeded.Set();
+                    }
+                });
+                nc.Flush();
+
+                var connLostEvent = new AutoResetEvent(false);
+                var opts = StanOptions.GetDefaultOptions();
+                opts.NatsConn = nc;
+                opts.PingInterval = pingIvl;
+                opts.ConnectionLostEventHandler = (obj, args) =>
+                {
+                    connLostEvent.Set();
+                };
+
+                using (new StanConnectionFactory().CreateConnection(CLUSTER_ID, CLIENT_ID, opts))
+                {
+                    // wait for pings, give us an extra ping just in case.
+                    Assert.True(exceeded.WaitOne(60000 + pingIvl * (StanConsts.DefaultPingMaxOut + 2)));
+
+                    // Close the NATS connection, wait for the error handler to fire (with 10s of slack).
+                    nc.Close();
+                    Assert.True(connLostEvent.WaitOne(120000 + (pingIvl * StanConsts.DefaultPingMaxOut)));
+                }
+            }
+        }
+
+        [Fact]
+        public void TestPingStreamingServerGone()
+        {
+            using (new NatsServer())
+            {
+                using (var nss = new NatsStreamingServer(" -ns nats://127.0.0.1:4222"))
+                {
+                    AutoResetEvent ev = new AutoResetEvent(false);
+
+                    StanOptions so = StanOptions.GetDefaultOptions();
+                    so.PingInterval = 200;
+                    so.PingMaxOutstanding = 3;
+                    so.ConnectionLostEventHandler = (obj, args) =>
+                    {
+                        ev.Set();
+                    };
+
+                    using (var sc = new StanConnectionFactory().CreateConnection(CLUSTER_ID, CLIENT_ID, so))
+                    {
+                        nss.Shutdown();
+                        Assert.True(ev.WaitOne(20000));
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        public void TestConnErrHandlerNotCalledOnNormalClose()
+        {
+            using (new NatsStreamingServer())
+            {
+                var ev = new AutoResetEvent(false);
+                var so = StanOptions.GetDefaultOptions();
+                so.PingInterval = 100;
+                so.PingMaxOutstanding = 3;
+                so.ConnectionLostEventHandler = (obj, args) =>
+                {
+                    ev.Set();
+                };
+
+                var sc = new StanConnectionFactory().CreateConnection(CLUSTER_ID, CLIENT_ID, so);
+                sc.Close();
+
+                // ensure handler is not called
+                Assert.False(ev.WaitOne(2000));
+            }
+        }
+
+        // This method connects to two servers, and attempts to send
+        // messages through them for a number of iterations over a timeout.
+        // If a message has been received, we know there is connectivity
+        // (a route) between the url1 and url2 server endpoints.
+        private bool waitForRoute(string url1, string url2, int timeout)
+        {
+            AutoResetEvent ev = new AutoResetEvent(false);
+            bool routeEstablished = false;
+
+            var cf = new ConnectionFactory();
+
+            // create conn 1
+            var opts = ConnectionFactory.GetDefaultOptions();
+            opts.AllowReconnect = false;
+            opts.Url = url1;
+            var nc1 = cf.CreateConnection(opts);
+            opts.Url = url1;
+
+            // create conn 2, wait for a message
+            var nc2 = cf.CreateConnection(opts);
+            nc2.SubscribeAsync("routecheck", (obj, args) =>
+            {
+                ev.Set();
+            });
+            nc2.Flush();
+
+            for (int i = 0; i < 10 && routeEstablished == false; i++)
+            {
+                nc1.Publish("routecheck", null);
+                nc1.Flush();
+                routeEstablished = ev.WaitOne(timeout / 10);               
+            }
+            nc1.Close();
+            nc2.Close();
+
+            return routeEstablished;
+        }
+
+        // This will test a ping response error, with the error
+        // being that a client has been replaced.
+        //
+        // 1) Cluster the embedded NATS server in the streaming server
+        //    with an external CORE nats server but do not advertise so
+        //    core NATS clients will only reconnect to the server they are
+        //    configured with.
+        // 2) Create a STAN client on the external server
+        // 3) Kill the external server.  The streaming server knows of the client,
+        //    who will attempt to reconnect to the killed server, effectively 
+        //    "pausing" the client.
+        // 4) Connect another client with the same ID to the running embedded 
+        //    NATS server.
+        // 5) Restart the external server.  The original client will reconnect, and
+        //    we check that it gets a ping response that it has been replaced.
+        [Fact]
+        public void TestPingResponseError()
+        {
+            IStanConnection sc1;
+            StanConnectionFactory scf = new StanConnectionFactory();
+            string errStr = "";
+
+            var ev = new AutoResetEvent(false);
+
+            // Create a NATS streaming server with an embedded NATS server
+            // clustered with an external NATS server.
+            string s1Args = " -p 4222 -cluster \"nats://127.0.0.1:6222\" -routes \"nats://127.0.0.1:6333\" --no_advertise=true";
+            string s2Args = " -p 4333 -cluster \"nats://127.0.0.1:6333\" -routes \"nats://127.0.0.1:6222\" --no_advertise=true";
+            using (new NatsStreamingServer(s1Args))
+            {
+                using (new NatsServer(s2Args))
+                {
+                    Assert.True(waitForRoute("nats://127.0.0.1:4222", "nats://127.0.0.1:4333", 30000), 
+                        "Route was not established.");
+
+                    // Connect to the routed NATS server, and set ping values
+                    // to speed up the test and be resilient to slow CI instances.
+                    var so = StanOptions.GetDefaultOptions();
+                    so.NatsURL = "nats://127.0.0.1:4333";
+                    so.PingInterval = 1000;
+                    so.PingMaxOutstanding = 120;
+                    so.ConnectionLostEventHandler = (obj, args) =>
+                    {
+                        errStr = args.ConnectionException.Message;
+                        ev.Set();
+                    };
+
+                    sc1 = scf.CreateConnection(CLUSTER_ID, CLIENT_ID, so);
+                    sc1.Publish("foo", null);
+
+                    // Falling out of this block will stop the server
+                }
+
+                // Now the NATS server is down and the internal NATS connection in sc1
+                // is attempting to reconnect.  It can't find the streaming server's embedded
+                // server in the cluster because the servers do not advertise.
+                //
+                // Create a new connection to the streaming server's embedded NATS server,
+                // and publish.  This replaces the sc1 client.
+                scf.CreateConnection(CLUSTER_ID, CLIENT_ID).Publish("foo", null);
+
+                // now restart the clustered NATS server and let the client reconnect.  Eventually, the
+                // nats connection in sc1 reconnects, and we get a client replaced message.
+                using (new NatsServer(s2Args))
+                {
+                    // ensure handler on the first conn is called
+                    Assert.True(ev.WaitOne(30000));
+                    Assert.Contains("replaced", errStr);
+                }
+            }
+        }
+
+        // See TestPingResponseError above for general structure, except here we 
+        // test for errors in publish.
+        [Fact]
+        public void TestPubFailsOnClientReplaced()
+        {
+            IStanConnection sc1;
+            StanConnectionFactory scf = new StanConnectionFactory();
+
+            var ev = new AutoResetEvent(false);
+
+            // Create a NATS streaming server with an embedded NATS server
+            // clustered with an external NATS server.
+            string s1Args = " -p 4222 -cluster \"nats://127.0.0.1:6222\" -routes \"nats://127.0.0.1:6333\" --no_advertise=true";
+            string s2Args = " -p 4333 -cluster \"nats://127.0.0.1:6333\" -routes \"nats://127.0.0.1:6222\" --no_advertise=true";
+            using (new NatsStreamingServer(s1Args))
+            {
+                using (new NatsServer(s2Args))
+                {
+                    Assert.True(waitForRoute("nats://127.0.0.1:4222", "nats://127.0.0.1:4333", 30000),
+                        "Route was not established.");
+                    // Connect to the routed NATS server, and set ping values
+                    // to speed up the test and be resilient to slow CI instances.
+                    var cf = new ConnectionFactory();
+                    var no = ConnectionFactory.GetDefaultOptions();
+                    no.Url = "nats://127.0.0.1:4333";
+                    no.MaxReconnect = Options.ReconnectForever;
+                    no.ReconnectWait = 250;
+                    no.ReconnectedEventHandler = (obj, args) =>
+                    {
+                        ev.Set();
+                    };
+
+                    var so = StanOptions.GetDefaultOptions();
+                    so.NatsConn = cf.CreateConnection(no);
+                    sc1 = scf.CreateConnection(CLUSTER_ID, CLIENT_ID, so);
+                    sc1.Publish("foo", null);
+                    // Falling out of this block will stop the server
+                }
+
+                // Now the NATS server is down and the internal NATS connection in sc1
+                // is attempting to reconnect.  It can't find the streaming server's embedded
+                // server in the cluster because the servers do not advertise.
+                //
+                // Create a new connection to the streaming server's embedded NATS server,
+                // and publish.  This replaces the sc1 client.
+                scf.CreateConnection(CLUSTER_ID, CLIENT_ID).Publish("foo", null);
+
+                // now restart the clustered NATS server and let the client reconnect.  Eventually, the
+                // nats connection in sc1 reconnects, and we check for an error on publish.
+                using (new NatsServer(s2Args))
+                {
+                    // wait until we are reconnected
+                    Assert.True(ev.WaitOne(30000));
+                    Assert.Throws<StanException>(() => sc1.Publish("foo", null));
+                }
+            }
+        }
+
+        [Fact]
+        public void TestPingCloseUnlockPubCalls()
+        {
+            // FIXME - this seems to take too long... no deadlock, but unecessary blocking?
+            StanConnectionFactory scf = new StanConnectionFactory();
+            using (new NatsServer())
+            {
+                string nssArgs = " -ns tcp://127.0.0.1:4222";
+                using (var nss = new NatsStreamingServer(nssArgs))
+                {
+                    var ev = new AutoResetEvent(false);
+                    var so = StanOptions.GetDefaultOptions();
+                    so.PingInterval = 50;
+                    so.PingMaxOutstanding = 10;
+                    so.PubAckWait = 100;
+                    var sc = scf.CreateConnection(CLUSTER_ID, CLIENT_ID);
+
+                    int total = 10;
+                    long count = 0;
+                    EventHandler<StanAckHandlerArgs> ah = (obj, args) =>
+                    {
+                        if (Interlocked.Increment(ref count) == (total / 2) - 1)
+                        {
+                            ev.Set();
+                        }
+                    };
+
+                    nss.Shutdown();
+
+                    List<Task<string>> pubs = new List<Task<string>>();
+                    for (int i = 0; i < total / 2; i++)
+                    {
+                        pubs.Add(Task.Run<string>(() => { return sc.Publish("foo", null, ah); }));
+                        pubs.Add(sc.PublishAsync("foo", null));
+                    }
+
+                    foreach (Task t in pubs)
+                    {
+                        try
+                        {
+                            t.Wait();
+                        }
+                        catch (Exception)
+                        {
+                            Interlocked.Increment(ref count);
+                        }
+                    }
+
+                    int check = 0;
+                    while (Interlocked.Read(ref count) != total && check < 40)
+                    {
+                        ev.WaitOne(500);
+                        check++;
+                    }
+
+                    Assert.True(count == total);
+                }
             }
         }
     }
