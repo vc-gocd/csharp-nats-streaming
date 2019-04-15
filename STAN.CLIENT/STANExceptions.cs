@@ -84,11 +84,19 @@ namespace STAN.Client
     }
 
     /// <summary>
-    /// An exception representing the case when a connection attempt times out.
+    /// An exception representing the case when a streaming connection attempt
+    /// fails due to a mismatched cluster id or connectivity with a streaming
+    /// server.
     /// </summary>
+    /// <remarks>
+    /// This is exception is thrown due to a mismatch between the cluster ID
+    /// of the client and the streaming server or when there is connectivity
+    /// with a core NATS server but not a streaming server.
+    /// </remarks>
     public class StanConnectRequestTimeoutException : StanTimeoutException
     {
         internal StanConnectRequestTimeoutException() : base("Connection Request Timed out.") { }
+        internal StanConnectRequestTimeoutException(string msg) : base(msg) { }
     }
 
     /// <summary>
