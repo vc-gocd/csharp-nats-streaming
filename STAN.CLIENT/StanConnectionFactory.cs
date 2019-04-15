@@ -21,10 +21,12 @@ namespace STAN.Client
         /// <summary>
         /// Creates a connection to the server.
         /// </summary>
-        /// <param name="clusterID"></param>
-        /// <param name="clientID"></param>
-        /// <param name="options"></param>
-        /// <returns></returns>
+        /// <param name="clusterID">The cluster ID of streaming server.</param>
+        /// <param name="clientID">A unique ID for this connection.</param>
+        /// <param name="options">Connection options.</param>
+        /// <exception cref="StanConnectionException">Thrown when core NATS is unable to connect to a server.</exception>
+        /// <exception cref="StanConnectRequestTimeoutException">Thrown when there is an invalid cluster id or other connectivity issues.</exception>
+        /// <returns>A connection to a streaming server.</returns>
         public IStanConnection CreateConnection(string clusterID, string clientID, StanOptions options)
         {
             return new Connection(clusterID, clientID, options);
@@ -33,9 +35,11 @@ namespace STAN.Client
         /// <summary>
         /// Creates a connection to the server.
         /// </summary>
-        /// <param name="clusterID"></param>
-        /// <param name="clientID"></param>
-        /// <returns></returns>
+        /// <param name="clusterID">The cluster ID of streaming server.</param>
+        /// <param name="clientID">A unique ID for this connection.</param>
+        /// <exception cref="StanConnectionException">Thrown when core NATS is unable to connect to a server.</exception>
+        /// <exception cref="StanConnectRequestTimeoutException">Thrown when there is an invalid cluster id or other connectivity issues.</exception>
+        /// <returns>A connection to a streaming server.</returns>
         public IStanConnection CreateConnection(string clusterID, string clientID)
         {
             return new Connection(clusterID, clientID, null);

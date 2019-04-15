@@ -58,10 +58,19 @@ namespace STAN.Client.UnitTests
         [Fact]
         public void TestUnreachable()
         {
+            bool thrown = false;
             using (new NatsStreamingServer())
             {
-                Assert.Throws<StanConnectRequestTimeoutException>(
-                    () => new StanConnectionFactory().CreateConnection("invalid", CLIENT_ID));
+                try
+                {
+                    new StanConnectionFactory().CreateConnection("invalid-cluster", CLIENT_ID);
+                }
+                catch (StanConnectRequestTimeoutException se)
+                {
+                    thrown = true;
+                    Assert.Contains("invalid-cluster", se.Message);
+                }
+                Assert.True(thrown);
             }
         }
 
